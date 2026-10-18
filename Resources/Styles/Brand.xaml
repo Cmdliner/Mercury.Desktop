@@ -1,0 +1,96 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="clr-namespace:Mercury.Desktop.Controls">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/Mercury.Desktop;component/Resources/Tokens/Tokens.xaml" />
+        <!-- FormField uses the Text.Label and Text.Error styles. -->
+        <ResourceDictionary Source="/Mercury.Desktop;component/Resources/Styles/Text.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+
+    <!-- Icon: a stroked outline drawn from a geometry in Tokens/Icons.xaml. -->
+    <Style TargetType="controls:Icon">
+        <Setter Property="Width" Value="20" />
+        <Setter Property="Height" Value="20" />
+        <Setter Property="Foreground" Value="{StaticResource Brush.Foreground}" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:Icon">
+                    <Viewbox Stretch="Uniform">
+                        <Canvas Width="24" Height="24">
+                            <Path Data="{TemplateBinding Data}"
+                                  Stroke="{TemplateBinding Foreground}"
+                                  StrokeThickness="{TemplateBinding StrokeThickness}"
+                                  StrokeStartLineCap="Round"
+                                  StrokeEndLineCap="Round"
+                                  StrokeLineJoin="Round" />
+                        </Canvas>
+                    </Viewbox>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--
+        LogoMark: the Mercury bead, cut on the diagonal with the halves slid apart.
+        Same geometry as the website's logo-mark component.
+    -->
+    <Style TargetType="controls:LogoMark">
+        <Setter Property="Width" Value="32" />
+        <Setter Property="Height" Value="32" />
+        <Setter Property="Foreground" Value="{StaticResource Brush.Foreground}" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:LogoMark">
+                    <Viewbox Stretch="Uniform">
+                        <Canvas Width="48" Height="48">
+                            <Path Data="M 36.73,11.27 A 18,18 0 0 0 11.27,36.73 Z"
+                                  Fill="{TemplateBinding Foreground}">
+                                <Path.RenderTransform>
+                                    <TranslateTransform X="0.8" Y="-2.8" />
+                                </Path.RenderTransform>
+                            </Path>
+                            <Path Data="M 11.27,36.73 A 18,18 0 0 0 36.73,11.27 Z"
+                                  Fill="{TemplateBinding Foreground}">
+                                <Path.RenderTransform>
+                                    <TranslateTransform X="-0.8" Y="2.8" />
+                                </Path.RenderTransform>
+                            </Path>
+                        </Canvas>
+                    </Viewbox>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+
+    <!--
+        FormField: label above an input, with the input's validation message below it.
+        The message is read from the validation errors on the wrapped control.
+    -->
+    <Style TargetType="controls:FormField">
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:FormField">
+                    <StackPanel>
+                        <TextBlock Margin="0,0,0,8"
+                                   Style="{StaticResource Text.Label}"
+                                   Text="{TemplateBinding Header}" />
+                        <ContentPresenter />
+                        <TextBlock Margin="0,6,0,0"
+                                   Style="{StaticResource Text.Error}"
+                                   Text="{Binding Content.(Validation.Errors)/ErrorContent, RelativeSource={RelativeSource TemplatedParent}}"
+                                   Visibility="{Binding Content.(Validation.HasError), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BoolToVisibility}}" />
+                    </StackPanel>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

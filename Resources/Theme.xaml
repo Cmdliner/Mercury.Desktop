@@ -1,0 +1,21 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--
+        The Mercury theme. App.xaml merges this one file. The order matters: tokens first,
+        because the styles below refer to them.
+    -->
+    <ResourceDictionary.MergedDictionaries>
+        <!-- Tokens: the raw values of the design system. -->
+        <ResourceDictionary Source="Tokens/Tokens.xaml" />
+
+        <!-- Styles: how each control looks, built only from tokens. -->
+        <ResourceDictionary Source="Styles/Windows.xaml" />
+        <ResourceDictionary Source="Styles/Text.xaml" />
+        <ResourceDictionary Source="Styles/Buttons.xaml" />
+        <ResourceDictionary Source="Styles/Inputs.xaml" />
+        <ResourceDictionary Source="Styles/Choices.xaml" />
+        <ResourceDictionary Source="Styles/Surfaces.xaml" />
+        <ResourceDictionary Source="Styles/Brand.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+</ResourceDictionary>

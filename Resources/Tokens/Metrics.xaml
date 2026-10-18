@@ -1,0 +1,31 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=System.Runtime">
+
+    <!--
+        Shape and size tokens. Controls (buttons, inputs, dropdowns, check boxes) are square,
+        exactly like the website. Containers get softer as they get larger.
+    -->
+    <CornerRadius x:Key="Radius.None">0</CornerRadius>
+    <CornerRadius x:Key="Radius.Xl">12</CornerRadius>
+    <CornerRadius x:Key="Radius.2xl">16</CornerRadius>
+    <CornerRadius x:Key="Radius.3xl">24</CornerRadius>
+    <CornerRadius x:Key="Radius.Full">999</CornerRadius>
+
+    <sys:Double x:Key="Size.Control">40</sys:Double>
+    <sys:Double x:Key="Size.ControlLg">48</sys:Double>
+    <sys:Double x:Key="Size.Input">44</sys:Double>
+
+    <!-- Spacing scale: 4, 8, 12, 16, 24, 32, 48. Use these instead of arbitrary margins. -->
+    <sys:Double x:Key="Space.1">4</sys:Double>
+    <sys:Double x:Key="Space.2">8</sys:Double>
+    <sys:Double x:Key="Space.3">12</sys:Double>
+    <sys:Double x:Key="Space.4">16</sys:Double>
+    <sys:Double x:Key="Space.6">24</sys:Double>
+    <sys:Double x:Key="Space.8">32</sys:Double>
+    <sys:Double x:Key="Space.12">48</sys:Double>
+
+    <Thickness x:Key="Padding.Control">16,0</Thickness>
+    <Thickness x:Key="Padding.ControlLg">24,0</Thickness>
+    <Thickness x:Key="Padding.Input">14,0</Thickness>
+</ResourceDictionary>

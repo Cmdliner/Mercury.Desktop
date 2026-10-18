@@ -6,10 +6,17 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <UseWPF>true</UseWPF>
+        <RootNamespace>Mercury.Desktop</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Models\" />
+        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <!-- Geist is embedded so the app looks the same on every machine (SIL Open Font License). -->
+        <Resource Include="Resources\Fonts\*.ttf" />
+        <None Include="Resources\Fonts\OFL.txt" />
     </ItemGroup>
 
 </Project>

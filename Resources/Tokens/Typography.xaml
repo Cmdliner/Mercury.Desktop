@@ -1,0 +1,26 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=System.Runtime">
+
+    <!--
+        Fonts. Geist ships as separate static files, and WPF sees each weight as its own
+        family. So a weight is chosen by picking a family (Font.Medium), not by FontWeight.
+        Files live in Resources/Fonts and are embedded in the app.
+    -->
+    <FontFamily x:Key="Font.Regular">pack://application:,,,/Resources/Fonts/#Geist</FontFamily>
+    <FontFamily x:Key="Font.Medium">pack://application:,,,/Resources/Fonts/#Geist Medium</FontFamily>
+    <FontFamily x:Key="Font.SemiBold">pack://application:,,,/Resources/Fonts/#Geist SemiBold</FontFamily>
+    <FontFamily x:Key="Font.Mono">pack://application:,,,/Resources/Fonts/#Geist Mono</FontFamily>
+    <FontFamily x:Key="Font.MonoMedium">pack://application:,,,/Resources/Fonts/#Geist Mono Medium</FontFamily>
+
+    <!-- Type scale (device-independent pixels). Pair each size with the text styles in Styles/Text.xaml. -->
+    <sys:Double x:Key="FontSize.Display">40</sys:Double>
+    <sys:Double x:Key="FontSize.Title">30</sys:Double>
+    <sys:Double x:Key="FontSize.Subtitle">24</sys:Double>
+    <sys:Double x:Key="FontSize.Heading">18</sys:Double>
+    <sys:Double x:Key="FontSize.Lead">15</sys:Double>
+    <sys:Double x:Key="FontSize.Body">14</sys:Double>
+    <sys:Double x:Key="FontSize.Label">13</sys:Double>
+    <sys:Double x:Key="FontSize.Caption">12</sys:Double>
+    <sys:Double x:Key="FontSize.Eyebrow">11</sys:Double>
+</ResourceDictionary>
