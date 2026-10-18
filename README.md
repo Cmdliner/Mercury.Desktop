@@ -91,5 +91,8 @@ backend check yet.
 `WorkspaceViewModel` is built from the onboarding result. It has the sidebar items, the selected page and
 `IsSidebarCollapsed` (toggled from the top bar; the sidebar animates between 260 and 76 wide). Each page is a
 `PageViewModel` with a matching view in `Views/Workspace`: `OverviewView` is built (stat cards, sales chart,
-recent transactions, reconciliation); Stores, Transactions, Accounts and Staff are placeholders. The overview uses
+recent transactions, reconciliation), and so are `StoresView` (a card per store plus an "Add store" dialog) and
+`PaymentsView` (the account number a customer pays into for the chosen store, with a Copy button). Stores and
+Payments share one list of `StoreAccount`s, so a new store appears in both. Transactions, Accounts and Staff are
+placeholders. The overview uses
 sample data from `DemoData` until the backend exists.
