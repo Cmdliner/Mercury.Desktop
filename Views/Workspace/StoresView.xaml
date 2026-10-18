@@ -10,10 +10,17 @@
         <DataTemplate DataType="{x:Type models:StoreAccount}">
             <Border Width="340"
                     Margin="0,0,16,16"
-                    Padding="24"
+                    Padding="0"
                     CornerRadius="{StaticResource Radius.Xl}"
                     Style="{StaticResource Surface.Card}">
                 <StackPanel>
+                    <Border Height="96" CornerRadius="12,12,0,0">
+                        <Border.Background>
+                            <ImageBrush ImageSource="pack://application:,,,/Resources/Images/stores.jpg" Stretch="UniformToFill" />
+                        </Border.Background>
+                        <Border CornerRadius="12,12,0,0" Background="#40000000" />
+                    </Border>
+                    <StackPanel Margin="24">
                     <Grid>
                         <StackPanel>
                             <TextBlock MaxWidth="210" HorizontalAlignment="Left"
@@ -38,6 +45,7 @@
                                    FontSize="13"
                                    Text="{Binding AccountNumber}" />
                     </Grid>
+                    </StackPanel>
                 </StackPanel>
             </Border>
         </DataTemplate>

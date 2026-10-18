@@ -89,12 +89,30 @@
         <StackPanel Margin="40,36,40,40">
 
             <!-- Greeting -->
-            <TextBlock FontFamily="{StaticResource Font.SemiBold}"
-                       FontSize="28"
-                       Text="{Binding Greeting}" />
-            <TextBlock Margin="0,6,0,28"
-                       Style="{StaticResource Text.Muted}"
-                       Text="{Binding Today}" />
+            <Border Height="150" Margin="0,0,0,24" CornerRadius="{StaticResource Radius.2xl}" ClipToBounds="True">
+                <Border.Background>
+                    <ImageBrush ImageSource="pack://application:,,,/Resources/Images/glass.jpg" Stretch="UniformToFill" />
+                </Border.Background>
+                <Grid>
+                    <Border>
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                <GradientStop Color="#F20A0A0A" Offset="0" />
+                                <GradientStop Color="#990A0A0A" Offset="1" />
+                            </LinearGradientBrush>
+                        </Border.Background>
+                    </Border>
+                    <controls:BeadIllustration Width="230" Height="172" Margin="0,0,20,-10"
+                                               HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                                               Foreground="{StaticResource Brush.SidebarForeground}" Opacity="0.7" />
+                    <StackPanel Margin="36,0,0,0" VerticalAlignment="Center">
+                        <TextBlock FontFamily="{StaticResource Font.SemiBold}" FontSize="28"
+                                   Foreground="{StaticResource Brush.SidebarForeground}" Text="{Binding Greeting}" />
+                        <TextBlock Margin="0,6,0,0" FontSize="14"
+                                   Foreground="{StaticResource Brush.SidebarMuted}" Text="{Binding Today}" />
+                    </StackPanel>
+                </Grid>
+            </Border>
 
             <!-- Stats -->
             <ItemsControl Margin="0,0,-16,0" ItemsSource="{Binding Stats}">

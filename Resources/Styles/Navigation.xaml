@@ -7,12 +7,14 @@
     </ResourceDictionary.MergedDictionaries>
 
     <!--
-        Sidebar navigation: a ListBox whose items look like Mercury nav rows. The selected row
-        fills black. Each item needs a Title and an Icon (a geometry); see NavItemViewModel.
+        Sidebar navigation, for the dark sidebar: a ListBox whose items look like Mercury nav rows.
+        The selected row fills white. Each item needs a Title and an IconKey; see NavItemViewModel.
+        When the sidebar is collapsed (the list's DataContext has IsSidebarCollapsed) a row shows
+        only its icon, centred, with the title in a tooltip.
         Apply with Style="{StaticResource ListBox.Navigation}".
     -->
     <Style x:Key="ListBoxItem.Navigation" TargetType="ListBoxItem">
-        <Setter Property="Foreground" Value="{StaticResource Brush.MutedForeground}" />
+        <Setter Property="Foreground" Value="{StaticResource Brush.SidebarMuted}" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="Margin" Value="0,0,0,4" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
@@ -20,10 +22,13 @@
             <Setter.Value>
                 <ControlTemplate TargetType="ListBoxItem">
                     <Border x:Name="Row"
-                            Height="40"
+                            Height="42"
                             Background="Transparent"
-                            CornerRadius="{StaticResource Radius.None}">
-                        <StackPanel Margin="14,0" Orientation="Horizontal">
+                            CornerRadius="8">
+                        <StackPanel x:Name="Content"
+                                    Margin="14,0"
+                                    HorizontalAlignment="Left"
+                                    Orientation="Horizontal">
                             <controls:Icon Width="18"
                                            Height="18"
                                            VerticalAlignment="Center"
@@ -40,18 +45,19 @@
                         </StackPanel>
                     </Border>
                     <ControlTemplate.Triggers>
-                        <!-- Icons only when the sidebar is collapsed; the name moves into a tooltip. -->
                         <DataTrigger Binding="{Binding DataContext.IsSidebarCollapsed, RelativeSource={RelativeSource AncestorType=ListBox}, FallbackValue=False}" Value="True">
                             <Setter TargetName="Title" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="Content" Property="Margin" Value="0" />
+                            <Setter TargetName="Content" Property="HorizontalAlignment" Value="Center" />
                             <Setter TargetName="Row" Property="ToolTip" Value="{Binding Title}" />
                         </DataTrigger>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Row" Property="Background" Value="{StaticResource Brush.Secondary}" />
-                            <Setter Property="Foreground" Value="{StaticResource Brush.Foreground}" />
+                            <Setter TargetName="Row" Property="Background" Value="{StaticResource Brush.SidebarStep}" />
+                            <Setter Property="Foreground" Value="{StaticResource Brush.SidebarForeground}" />
                         </Trigger>
                         <Trigger Property="IsSelected" Value="True">
-                            <Setter TargetName="Row" Property="Background" Value="{StaticResource Brush.Primary}" />
-                            <Setter Property="Foreground" Value="{StaticResource Brush.PrimaryForeground}" />
+                            <Setter TargetName="Row" Property="Background" Value="{StaticResource Brush.SidebarForeground}" />
+                            <Setter Property="Foreground" Value="{StaticResource Brush.Sidebar}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

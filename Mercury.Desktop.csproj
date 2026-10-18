@@ -16,6 +16,7 @@
     <ItemGroup>
         <!-- Geist is embedded so the app looks the same on every machine (SIL Open Font License). -->
         <Resource Include="Resources\Fonts\*.ttf" />
+        <Resource Include="Resources\Images\*.jpg" />
         <None Include="Resources\Fonts\OFL.txt" />
     </ItemGroup>
 

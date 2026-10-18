@@ -12,19 +12,20 @@
     <Viewbox Stretch="Uniform">
         <Canvas Width="240" Height="180">
             <Ellipse Canvas.Left="30" Canvas.Top="-10" Width="180" Height="180"
-                     Stroke="{StaticResource Brush.Border}" StrokeThickness="1" />
+                     Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=UserControl}}" Opacity="0.16" StrokeThickness="1" />
             <Ellipse Canvas.Left="55" Canvas.Top="15" Width="130" Height="130"
-                     Stroke="{StaticResource Brush.Border}" StrokeThickness="1" />
+                     Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=UserControl}}" Opacity="0.16" StrokeThickness="1" />
 
             <Line X1="20" Y1="170" X2="220" Y2="10"
-                  Stroke="{StaticResource Brush.BorderStrong}"
+                  Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                  Opacity="0.3"
                   StrokeDashArray="1 5"
                   StrokeDashCap="Round"
                   StrokeThickness="1.5" />
 
             <!-- Solid half -->
             <Path Data="M 36.73,11.27 A 18,18 0 0 0 11.27,36.73 Z"
-                  Fill="{StaticResource Brush.Foreground}">
+                  Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=UserControl}}">
                 <Path.RenderTransform>
                     <TransformGroup>
                         <TranslateTransform X="0.8" Y="-2.8" />
@@ -36,7 +37,7 @@
 
             <!-- Outlined half -->
             <Path Data="M 11.27,36.73 A 18,18 0 0 0 36.73,11.27 Z"
-                  Stroke="{StaticResource Brush.Foreground}"
+                  Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=UserControl}}"
                   StrokeDashArray="0.5 1.6"
                   StrokeDashCap="Round"
                   StrokeThickness="0.45">
@@ -49,8 +50,8 @@
                 </Path.RenderTransform>
             </Path>
 
-            <Ellipse Canvas.Left="34" Canvas.Top="128" Width="8" Height="8" Fill="{StaticResource Brush.BorderStrong}" />
-            <Ellipse Canvas.Left="196" Canvas.Top="30" Width="6" Height="6" Fill="{StaticResource Brush.BorderStrong}" />
+            <Ellipse Canvas.Left="34" Canvas.Top="128" Width="8" Height="8" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=UserControl}}" Opacity="0.3" />
+            <Ellipse Canvas.Left="196" Canvas.Top="30" Width="6" Height="6" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=UserControl}}" Opacity="0.3" />
         </Canvas>
     </Viewbox>
 </UserControl>

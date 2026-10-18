@@ -17,9 +17,9 @@
         WindowStartupLocation="CenterScreen"
         WindowStyle="None">
 
-    <!-- The app draws its own title bar: the top 64px is the drag area, the edges resize. -->
+    <!-- The app draws its own title bar: the top 44px is the drag area, the edges resize. -->
     <WindowChrome.WindowChrome>
-        <WindowChrome CaptionHeight="64"
+        <WindowChrome CaptionHeight="44"
                       CornerRadius="0"
                       GlassFrameThickness="0,0,0,1"
                       ResizeBorderThickness="6"
@@ -40,19 +40,38 @@
 
     <!-- A maximised borderless window spills past the screen edge; RootFrame pads it back in. -->
     <Grid x:Name="RootFrame">
-        <ContentControl Content="{Binding Current}" />
-        <controls:WindowControls HorizontalAlignment="Right"
-                                 VerticalAlignment="Top">
-            <controls:WindowControls.Style>
-                <Style TargetType="controls:WindowControls">
-                    <Setter Property="Foreground" Value="{StaticResource Brush.Foreground}" />
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding HasDarkCaptionArea}" Value="True">
-                            <Setter Property="Foreground" Value="{StaticResource Brush.SidebarForeground}" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </controls:WindowControls.Style>
-        </controls:WindowControls>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="44" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Title bar: near-black, with the brand on the left and the window buttons on the right. -->
+        <Border Background="{StaticResource Brush.Sidebar}"
+                BorderBrush="{StaticResource Brush.SidebarStep}"
+                BorderThickness="0,0,0,1">
+            <Grid>
+                <StackPanel Margin="18,0,0,0"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal">
+                    <controls:LogoMark Width="18" Height="18" Foreground="{StaticResource Brush.SidebarForeground}" />
+                    <TextBlock Margin="9,0,0,1"
+                               VerticalAlignment="Center"
+                               FontFamily="{StaticResource Font.SemiBold}"
+                               FontSize="14"
+                               Foreground="{StaticResource Brush.SidebarForeground}"
+                               Text="mercury" />
+                    <Border Width="1" Height="14" Margin="14,0,14,0" Background="{StaticResource Brush.SidebarStep}" />
+                    <TextBlock VerticalAlignment="Center"
+                               FontSize="12"
+                               Foreground="{StaticResource Brush.SidebarMuted}"
+                               Text="Finance for every store" />
+                </StackPanel>
+
+                <controls:WindowControls HorizontalAlignment="Right"
+                                         VerticalAlignment="Stretch" />
+            </Grid>
+        </Border>
+
+        <ContentControl Grid.Row="1" Content="{Binding Current}" />
     </Grid>
 </Window>

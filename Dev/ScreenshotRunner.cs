@@ -154,6 +154,15 @@ internal static class ScreenshotRunner
         await SettleAsync(dispatcher);
         Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "dashboard-hidden.png"));
         workspace.ToggleAmountsCommand.Execute(null);
+
+        workspace.ShowProfileCommand.Execute(null);
+        await SettleAsync(dispatcher);
+        Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "profile.png"));
+        workspace.CloseProfileCommand.Execute(null);
+        workspace.RequestSignOutCommand.Execute(null);
+        await SettleAsync(dispatcher);
+        Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "sign-out.png"));
+        workspace.CancelSignOutCommand.Execute(null);
         workspace.ToggleSidebarCommand.Execute(null);
         await SettleAsync(dispatcher);
         Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "dashboard-collapsed.png"));

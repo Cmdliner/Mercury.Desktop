@@ -19,6 +19,7 @@ public sealed partial class WorkspaceViewModel : ObservableObject
         BusinessName = account.Business.Name;
         OwnerName = account.Owner.FullName;
         OwnerInitials = InitialsOf(account.Owner.FullName);
+        OwnerEmail = account.Owner.Email;
 
         var firstName = account.Owner.FullName.Split(' ', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() ?? "there";
 
@@ -51,6 +52,58 @@ public sealed partial class WorkspaceViewModel : ObservableObject
     public string OwnerName { get; }
 
     public string OwnerInitials { get; }
+
+    public string OwnerEmail { get; }
+
+    /// <summary>Raised once the owner has confirmed they want to sign out.</summary>
+    public event EventHandler? SignedOut;
+
+    [ObservableProperty]
+    private bool _isUserMenuOpen;
+
+    [ObservableProperty]
+    private bool _isProfileOpen;
+
+    [ObservableProperty]
+    private bool _isSignOutConfirming;
+
+    [RelayCommand]
+    private void OpenUserMenu() => IsUserMenuOpen = true;
+
+    [RelayCommand]
+    private void ShowProfile()
+    {
+        IsUserMenuOpen = false;
+        IsProfileOpen = true;
+    }
+
+    [RelayCommand]
+    private void CloseProfile() => IsProfileOpen = false;
+
+    [RelayCommand]
+    private void RequestSignOut()
+    {
+        IsUserMenuOpen = false;
+        IsProfileOpen = false;
+        IsSignOutConfirming = true;
+    }
+
+    [RelayCommand]
+    private void CancelSignOut() => IsSignOutConfirming = false;
+
+    [RelayCommand]
+    private void ConfirmSignOut()
+    {
+        IsSignOutConfirming = false;
+        SignedOut?.Invoke(this, EventArgs.Empty);
+    }
+
+    [RelayCommand]
+    private void HideAmountsFromMenu()
+    {
+        IsUserMenuOpen = false;
+        IsAmountsHidden = !IsAmountsHidden;
+    }
 
     public IReadOnlyList<NavItemViewModel> NavItems { get; }
 

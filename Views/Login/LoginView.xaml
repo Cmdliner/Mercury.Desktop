@@ -51,8 +51,16 @@
             </StackPanel>
         </StackPanel>
 
-        <!-- Brand panel -->
-        <Border Grid.Column="1" Background="{StaticResource Brush.Sidebar}">
+        <!-- Brand panel: the glass texture, the bead and the pitch -->
+        <Grid Grid.Column="1" Background="{StaticResource Brush.Sidebar}" ClipToBounds="True">
+            <Border Opacity="0.32">
+                <Border.Background>
+                    <ImageBrush ImageSource="pack://application:,,,/Resources/Images/glass.jpg" Stretch="UniformToFill" />
+                </Border.Background>
+            </Border>
+            <controls:BeadIllustration Width="300" Height="225" Margin="0,0,-40,-30"
+                                       HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                                       Foreground="{StaticResource Brush.SidebarForeground}" Opacity="0.5" />
             <StackPanel MaxWidth="400"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center">
@@ -67,6 +75,6 @@
                            Text="Every store keeps its own accounts and ledger. Mercury brings them together, so you can see where the money is at a glance."
                            TextWrapping="Wrap" />
             </StackPanel>
-        </Border>
+        </Grid>
     </Grid>
 </UserControl>

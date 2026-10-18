@@ -219,8 +219,7 @@
             <TextBlock Style="{StaticResource Section.Note}"
                        Text="What the signed-in app is made of: sidebar navigation, stat cards, the avatar, window caption buttons and the slim scroll bar." />
             <StackPanel Orientation="Horizontal">
-                <Border Width="240" Padding="16" Background="{StaticResource Brush.Card}"
-                        BorderBrush="{StaticResource Brush.Border}" BorderThickness="1">
+                <Border Width="240" Padding="16" Background="{StaticResource Brush.Sidebar}">
                     <ListBox ItemsSource="{Binding NavSamples, RelativeSource={RelativeSource AncestorType=Window}}"
                              SelectedIndex="0"
                              Style="{StaticResource ListBox.Navigation}" />
