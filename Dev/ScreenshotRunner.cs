@@ -149,6 +149,30 @@ internal static class ScreenshotRunner
         Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "staff-add.png"));
         staff.CloseInviteCommand.Execute(null);
 
+        staff.OpenCommand.Execute(staff.Staff[0]);
+        await SettleAsync(dispatcher);
+        Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "staff-detail.png"));
+        staff.CloseDetailCommand.Execute(null);
+
+        workspace.SelectedNavItem = workspace.NavItems.First(item => item.Title == "Stores");
+        await SettleAsync(dispatcher);
+        stores.OpenDetailCommand.Execute(stores.Stores[0]);
+        await SettleAsync(dispatcher);
+        Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "store-detail.png"));
+        stores.CloseDetailCommand.Execute(null);
+
+        workspace.SelectedNavItem = workspace.NavItems.First(item => item.Title == "Accounts");
+        await SettleAsync(dispatcher);
+        var accounts = (ViewModels.Workspace.AccountsViewModel)workspace.CurrentPage;
+        accounts.OpenEntryCommand.Execute(accounts.Entries[0]);
+        await SettleAsync(dispatcher);
+        Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "entry-detail.png"));
+        accounts.CloseDetailCommand.Execute(null);
+        accounts.OpenAccountCommand.Execute(accounts.Accounts[0]);
+        await SettleAsync(dispatcher);
+        Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "account-detail.png"));
+        accounts.CloseDetailCommand.Execute(null);
+
         workspace.SelectedNavItem = workspace.NavItems[0];
         workspace.ToggleAmountsCommand.Execute(null);
         await SettleAsync(dispatcher);

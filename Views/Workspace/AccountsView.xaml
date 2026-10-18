@@ -8,7 +8,11 @@
     <UserControl.Resources>
         <!-- One account: what it is for, what it holds and its share of the total. -->
         <DataTemplate DataType="{x:Type models:LedgerAccount}">
-            <Border Margin="0,0,16,16" Padding="24"
+            <Button Margin="0,0,16,16"
+                    Command="{Binding DataContext.OpenAccountCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                    CommandParameter="{Binding}"
+                    Style="{StaticResource Button.Plain}">
+            <Border Padding="24"
                     CornerRadius="{StaticResource Radius.Xl}"
                     Style="{StaticResource Surface.Card}">
                 <StackPanel>
@@ -36,10 +40,13 @@
                     </Grid>
                 </StackPanel>
             </Border>
+            </Button>
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type models:LedgerEntry}">
-            <Border Padding="0,16" BorderBrush="{StaticResource Brush.Border}" BorderThickness="0,1,0,0">
+            <Button Command="{Binding DataContext.OpenEntryCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                    CommandParameter="{Binding}"
+                    Style="{StaticResource Button.TableRow}">
                 <Grid Margin="24,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="80" />
@@ -55,10 +62,11 @@
                     <controls:Money Grid.Column="4" HorizontalAlignment="Right" Amount="{Binding Amount}"
                                     FontFamily="{StaticResource Font.Medium}" FontSize="14" />
                 </Grid>
-            </Border>
+            </Button>
         </DataTemplate>
     </UserControl.Resources>
 
+    <Grid>
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="40,36,24,40">
             <Grid Margin="0,0,16,28">
@@ -104,4 +112,82 @@
             </Border>
         </StackPanel>
     </ScrollViewer>
+        <!-- Detail dialog -->
+        <Grid Background="#B30A0A0A"
+              Visibility="{Binding IsAccountOpen, Converter={StaticResource Converter.BoolToVisibility}}">
+            <Border Width="440" Padding="32" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    CornerRadius="{StaticResource Radius.Xl}" Style="{StaticResource Surface.Card}">
+                <StackPanel DataContext="{Binding SelectedAccount}">
+                    <Grid>
+                        <TextBlock Style="{StaticResource Text.Subtitle}" Text="Account details" />
+                        <Button HorizontalAlignment="Right" VerticalAlignment="Top"
+                                Command="{Binding DataContext.CloseDetailCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                Style="{StaticResource Button.Icon}" ToolTip="Close">
+                            <controls:Icon Width="16" Height="16" Data="{StaticResource Icon.Close}"
+                                           Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                           StrokeThickness="1.8" />
+                        </Button>
+                    </Grid>
+                    <Border Margin="0,24,0,0" Width="48" Height="48" HorizontalAlignment="Left"
+                            Background="{StaticResource Brush.Secondary}" CornerRadius="24">
+                        <controls:Icon Width="20" Height="20"
+                                       Data="{Binding IconKey, Converter={StaticResource Converter.Icon}}"
+                                       StrokeThickness="1.8" />
+                    </Border>
+                    <TextBlock Margin="0,16,0,0" Style="{StaticResource Text.Heading}" Text="{Binding Name}" />
+                    <TextBlock Margin="0,4,0,0" Style="{StaticResource Text.Caption}" Text="{Binding Description}" />
+                    <controls:Money Margin="0,20,0,22" Amount="{Binding Balance}" Style="{StaticResource Text.Stat}" />
+                    <Grid Height="6" Margin="0,0,0,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="{Binding Filled}" />
+                            <ColumnDefinition Width="{Binding Rest}" />
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.ColumnSpan="2" Background="{StaticResource Brush.Input}" CornerRadius="3" />
+                        <Border Background="{StaticResource Brush.Foreground}" CornerRadius="3" />
+                    </Grid>
+                    <TextBlock Style="{StaticResource Text.Caption}">
+                        <Run Text="{Binding Share, Mode=OneWay, StringFormat={}{0:P0}}" /><Run Text=" of everything across your accounts" />
+                    </TextBlock>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- Detail dialog -->
+        <Grid Background="#B30A0A0A"
+              Visibility="{Binding IsEntryOpen, Converter={StaticResource Converter.BoolToVisibility}}">
+            <Border Width="440" Padding="32" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    CornerRadius="{StaticResource Radius.Xl}" Style="{StaticResource Surface.Card}">
+                <StackPanel DataContext="{Binding SelectedEntry}">
+                    <Grid>
+                        <TextBlock Style="{StaticResource Text.Subtitle}" Text="Ledger entry" />
+                        <Button HorizontalAlignment="Right" VerticalAlignment="Top"
+                                Command="{Binding DataContext.CloseDetailCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                Style="{StaticResource Button.Icon}" ToolTip="Close">
+                            <controls:Icon Width="16" Height="16" Data="{StaticResource Icon.Close}"
+                                           Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                           StrokeThickness="1.8" />
+                        </Button>
+                    </Grid>
+                    <controls:Money Margin="0,24,0,2" Amount="{Binding Amount}" Style="{StaticResource Text.Stat}" />
+                    <TextBlock Margin="0,0,0,22" Style="{StaticResource Text.Caption}" Text="{Binding Description}" />
+                    <Border Margin="0,0,0,22" Style="{StaticResource Surface.Divider}" />
+                    <Grid Margin="0,0,0,14">
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="130" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                            <TextBlock Style="{StaticResource Text.Caption}" Text="Date" />
+                            <TextBlock Grid.Column="1" Style="{StaticResource Text.Label}" Text="{Binding Date}" />
+                        </Grid>
+                    <Grid Margin="0,0,0,14">
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="130" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                            <TextBlock Style="{StaticResource Text.Caption}" Text="Moved from" />
+                            <TextBlock Grid.Column="1" Style="{StaticResource Text.Label}" Text="{Binding From}" />
+                        </Grid>
+                    <Grid Margin="0,0,0,14">
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="130" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                            <TextBlock Style="{StaticResource Text.Caption}" Text="Moved to" />
+                            <TextBlock Grid.Column="1" Style="{StaticResource Text.Label}" Text="{Binding To}" />
+                        </Grid>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
 </UserControl>

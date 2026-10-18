@@ -7,7 +7,9 @@
 
     <UserControl.Resources>
         <DataTemplate DataType="{x:Type models:StaffMember}">
-            <Border Padding="0,16" BorderBrush="{StaticResource Brush.Border}" BorderThickness="0,1,0,0">
+            <Button Command="{Binding DataContext.OpenCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                    CommandParameter="{Binding}"
+                    Style="{StaticResource Button.TableRow}">
                 <Grid Margin="24,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="2.2*" />
@@ -31,7 +33,7 @@
                         <TextBlock Text="{Binding Access}" />
                     </Border>
                 </Grid>
-            </Border>
+            </Button>
         </DataTemplate>
 
         <!-- A role and what it can do, for the side card. -->
@@ -147,6 +149,64 @@
                     <Button HorizontalAlignment="Right"
                             Command="{Binding DataContext.AddStaffCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                             Content="Add staff" Style="{StaticResource Button.Primary.Lg}" />
+                </StackPanel>
+            </Border>
+        </Grid>
+        <!-- Detail dialog -->
+        <Grid Background="#B30A0A0A"
+              Visibility="{Binding IsDetailOpen, Converter={StaticResource Converter.BoolToVisibility}}">
+            <Border Width="460" Padding="32" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    CornerRadius="{StaticResource Radius.Xl}" Style="{StaticResource Surface.Card}">
+                <StackPanel DataContext="{Binding Selected}">
+                    <Grid>
+                        <TextBlock Style="{StaticResource Text.Subtitle}" Text="Staff details" />
+                        <Button HorizontalAlignment="Right" VerticalAlignment="Top"
+                                Command="{Binding DataContext.CloseDetailCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                Style="{StaticResource Button.Icon}" ToolTip="Close">
+                            <controls:Icon Width="16" Height="16" Data="{StaticResource Icon.Close}"
+                                           Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                           StrokeThickness="1.8" />
+                        </Button>
+                    </Grid>
+                    <StackPanel Margin="0,24,0,0" Orientation="Horizontal">
+                        <Border Width="56" Height="56" Style="{StaticResource Surface.Avatar}" CornerRadius="28">
+                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16" Text="{Binding Initials}" />
+                        </Border>
+                        <StackPanel Margin="16,0,0,0" VerticalAlignment="Center">
+                            <TextBlock Style="{StaticResource Text.Heading}" Text="{Binding Name}" />
+                            <Border Margin="0,6,0,0" HorizontalAlignment="Left" Style="{StaticResource Pill.Success}">
+                                <TextBlock Text="{Binding Access}" />
+                            </Border>
+                        </StackPanel>
+                    </StackPanel>
+                    <Border Margin="0,24,0,22" Style="{StaticResource Surface.Divider}" />
+                    <Grid Margin="0,0,0,14">
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="130" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                            <TextBlock Style="{StaticResource Text.Caption}" Text="Email" />
+                            <TextBlock Grid.Column="1" Style="{StaticResource Text.Label}" Text="{Binding Email}" />
+                        </Grid>
+                    <Grid Margin="0,0,0,14">
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="130" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                            <TextBlock Style="{StaticResource Text.Caption}" Text="Role" />
+                            <TextBlock Grid.Column="1" Style="{StaticResource Text.Label}" Text="{Binding Role}" />
+                        </Grid>
+                    <Grid Margin="0,0,0,14">
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="130" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                            <TextBlock Style="{StaticResource Text.Caption}" Text="Store" />
+                            <TextBlock Grid.Column="1" Style="{StaticResource Text.Label}" Text="{Binding Store}" />
+                        </Grid>
+                    <TextBlock Margin="0,12,0,12" Style="{StaticResource Text.Heading}" Text="What they can do" />
+                    <ItemsControl ItemsSource="{Binding Capabilities}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="0,0,0,10" Orientation="Horizontal">
+                                    <controls:Icon Width="14" Height="14" Data="{StaticResource Icon.Check}"
+                                                   Foreground="{StaticResource Brush.Success}" StrokeThickness="2.4" />
+                                    <TextBlock Margin="10,0,0,1" Style="{StaticResource Text.Body}" Text="{Binding}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
                 </StackPanel>
             </Border>
         </Grid>

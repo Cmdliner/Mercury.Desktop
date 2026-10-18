@@ -22,6 +22,18 @@ public sealed partial class StaffViewModel : PageViewModel
     public ObservableCollection<StaffMember> Staff { get; }
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsDetailOpen))]
+    private StaffMember? _selected;
+
+    public bool IsDetailOpen => Selected is not null;
+
+    [RelayCommand]
+    private void Open(StaffMember person) => Selected = person;
+
+    [RelayCommand]
+    private void CloseDetail() => Selected = null;
+
+    [ObservableProperty]
     private bool _isInviting;
 
     [ObservableProperty]

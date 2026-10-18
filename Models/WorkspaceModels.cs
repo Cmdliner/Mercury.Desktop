@@ -28,6 +28,30 @@ public sealed record Transaction(
 /// <summary>A person who works in the business and what they are allowed to see.</summary>
 public sealed record StaffMember(string Name, string Email, string Role, string Store, string Access)
 {
+    /// <summary>What this person can do, in plain words, based on their access level.</summary>
+    public IReadOnlyList<string> Capabilities => Access switch
+    {
+        "Full" =>
+        [
+            "See every store and account they manage",
+            "Take payments and record transactions",
+            "Add and manage staff",
+            "Change store settings",
+        ],
+        "Financial" =>
+        [
+            "See the books of every store",
+            "View transactions and ledger entries",
+            "Cannot change settings or staff",
+        ],
+        _ =>
+        [
+            "Take payments for their own store",
+            "View that store's transactions",
+            "Cannot see other stores or accounts",
+        ],
+    };
+
     public string Initials
     {
         get

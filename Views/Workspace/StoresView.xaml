@@ -8,6 +8,9 @@
     <UserControl.Resources>
         <!-- One store: where it is, the account it takes payments into, and what it holds. -->
         <DataTemplate DataType="{x:Type models:StoreAccount}">
+            <Button Command="{Binding DataContext.OpenDetailCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                    CommandParameter="{Binding}"
+                    Style="{StaticResource Button.Plain}">
             <Border Width="340"
                     Margin="0,0,16,16"
                     Padding="0"
@@ -48,6 +51,7 @@
                     </StackPanel>
                 </StackPanel>
             </Border>
+            </Button>
         </DataTemplate>
     </UserControl.Resources>
 
@@ -129,6 +133,52 @@
                             Command="{Binding DataContext.CreateStoreCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                             Content="Create store"
                             Style="{StaticResource Button.Primary.Lg}" />
+                </StackPanel>
+            </Border>
+        </Grid>
+        <!-- Detail dialog -->
+        <Grid Background="#B30A0A0A"
+              Visibility="{Binding IsDetailOpen, Converter={StaticResource Converter.BoolToVisibility}}">
+            <Border Width="460" Padding="32" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    CornerRadius="{StaticResource Radius.Xl}" Style="{StaticResource Surface.Card}">
+                <StackPanel DataContext="{Binding Selected}">
+                    <Grid>
+                        <TextBlock Style="{StaticResource Text.Subtitle}" Text="Store details" />
+                        <Button HorizontalAlignment="Right" VerticalAlignment="Top"
+                                Command="{Binding DataContext.CloseDetailCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                Style="{StaticResource Button.Icon}" ToolTip="Close">
+                            <controls:Icon Width="16" Height="16" Data="{StaticResource Icon.Close}"
+                                           Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                           StrokeThickness="1.8" />
+                        </Button>
+                    </Grid>
+                    <Border Margin="0,20,0,0" Height="110" CornerRadius="10">
+                        <Border.Background>
+                            <ImageBrush ImageSource="pack://application:,,,/Resources/Images/stores.jpg" Stretch="UniformToFill" />
+                        </Border.Background>
+                    </Border>
+                    <TextBlock Margin="0,18,0,0" Style="{StaticResource Text.Heading}" Text="{Binding Name}" />
+                    <Border Margin="0,8,0,0" HorizontalAlignment="Left" Style="{StaticResource Pill.Success}">
+                        <TextBlock Text="Active" />
+                    </Border>
+                    <controls:Money Margin="0,18,0,2" Amount="{Binding Balance}" Style="{StaticResource Text.Stat}" />
+                    <TextBlock Margin="0,0,0,22" Style="{StaticResource Text.Caption}" Text="Current balance" />
+                    <Border Margin="0,0,0,22" Style="{StaticResource Surface.Divider}" />
+                    <Grid Margin="0,0,0,14">
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="130" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                            <TextBlock Style="{StaticResource Text.Caption}" Text="Location" />
+                            <TextBlock Grid.Column="1" Style="{StaticResource Text.Label}" Text="{Binding Location}" />
+                        </Grid>
+                    <Grid Margin="0,0,0,14">
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="130" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                            <TextBlock Style="{StaticResource Text.Caption}" Text="Bank" />
+                            <TextBlock Grid.Column="1" Style="{StaticResource Text.Label}" Text="{Binding Bank}" />
+                        </Grid>
+                    <Grid Margin="0,0,0,14">
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="130" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                            <TextBlock Style="{StaticResource Text.Caption}" Text="Account number" />
+                            <TextBlock Grid.Column="1" FontFamily="{StaticResource Font.Mono}" FontSize="13" Text="{Binding AccountNumber}" />
+                        </Grid>
                 </StackPanel>
             </Border>
         </Grid>

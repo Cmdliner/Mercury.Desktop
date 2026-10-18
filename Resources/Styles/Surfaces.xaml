@@ -50,4 +50,42 @@
         <Setter Property="Background" Value="{StaticResource Brush.SunSoft}" />
         <Setter Property="TextElement.Foreground" Value="{StaticResource Brush.SunInk}" />
     </Style>
+
+    <!-- A whole table row that can be clicked: a hairline above it and a soft hover. -->
+    <Style x:Key="Button.TableRow" TargetType="Button">
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Row"
+                            Padding="0,18"
+                            Background="Transparent"
+                            BorderBrush="{StaticResource Brush.Border}"
+                            BorderThickness="0,1,0,0">
+                        <ContentPresenter />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Row" Property="Background" Value="{StaticResource Brush.SurfaceMuted}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- A button that shows its content with no chrome, for clickable cards. -->
+    <Style x:Key="Button.Plain" TargetType="Button">
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <ContentPresenter />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>

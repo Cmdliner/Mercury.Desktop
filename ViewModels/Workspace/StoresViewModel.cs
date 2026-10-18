@@ -13,6 +13,18 @@ public sealed partial class StoresViewModel(ObservableCollection<StoreAccount> s
     public ObservableCollection<StoreAccount> Stores { get; } = stores;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsDetailOpen))]
+    private StoreAccount? _selected;
+
+    public bool IsDetailOpen => Selected is not null;
+
+    [RelayCommand]
+    private void OpenDetail(StoreAccount store) => Selected = store;
+
+    [RelayCommand]
+    private void CloseDetail() => Selected = null;
+
+    [ObservableProperty]
     private bool _isAdding;
 
     [ObservableProperty]
