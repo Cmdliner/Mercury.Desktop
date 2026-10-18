@@ -1,7 +1,7 @@
 ; Inno Setup script for the Mercury installer. Build it with installer\build.ps1, which
 ; publishes the app first. Compile by hand with: ISCC installer\Mercury.iss
 #define AppName "Mercury"
-#define AppVersion "0.1.0"
+#define AppVersion "0.2.0"
 #define AppExe "Mercury.Desktop.exe"
 #define Publish "..\publish"
 

@@ -132,6 +132,12 @@ This publishes the app as one self-contained `win-x64` exe in `publish/`, then b
 `dist/Mercury-Setup.exe` with [Inno Setup 6](https://jrsoftware.org/isdl.php) (install it once, for example with
 `winget install JRSoftware.InnoSetup`). Both folders are git-ignored.
 
+- **Safeguards:** the script always cleans first (a stale incremental build once shipped without the icon, and the installed
+  app crashed on start), then runs `installersmoke-test.ps1`, which starts the published exe from a fresh folder and fails
+  unless a window titled "Mercury" appears and stays open. No installer is built for an exe that fails. Add `-TestInstaller`
+  to also install the finished installer into a temporary folder, check it, and uninstall it (skipped if Mercury is already
+  installed on the machine).
+- **Crash log:** a start-up failure shows a message and is written to `%LOCALAPPDATA%Mercurycrash.log`.
 - **Icon:** `Resources/App.ico` (the Mercury mark on a near-black tile) is the exe, window, shortcut and installer icon.
 - **Version:** change `<Version>`, `<AssemblyVersion>` and `<FileVersion>` in `Mercury.Desktop.csproj`, and `AppVersion`
   in `installer/Mercury.iss`, together.
