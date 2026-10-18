@@ -8,8 +8,8 @@
     -->
     <CornerRadius x:Key="Radius.None">0</CornerRadius>
     <CornerRadius x:Key="Radius.Xl">12</CornerRadius>
-    <CornerRadius x:Key="Radius.2xl">16</CornerRadius>
-    <CornerRadius x:Key="Radius.3xl">24</CornerRadius>
+    <CornerRadius x:Key="Radius.2Xl">16</CornerRadius>
+    <CornerRadius x:Key="Radius.3Xl">24</CornerRadius>
     <CornerRadius x:Key="Radius.Full">999</CornerRadius>
 
     <sys:Double x:Key="Size.Control">40</sys:Double>

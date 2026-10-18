@@ -24,7 +24,7 @@
             </Grid>
 
             <!-- Two columns: a textured panel, then the payment details. -->
-            <Border CornerRadius="{StaticResource Radius.2xl}"
+            <Border CornerRadius="{StaticResource Radius.2Xl}"
                     BorderBrush="{StaticResource Brush.Border}"
                     BorderThickness="1"
                     ClipToBounds="True"

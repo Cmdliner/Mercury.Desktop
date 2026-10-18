@@ -14,7 +14,7 @@
         <Setter Property="Background" Value="{StaticResource Brush.Card}" />
         <Setter Property="BorderBrush" Value="{StaticResource Brush.Border}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="{StaticResource Radius.2xl}" />
+        <Setter Property="CornerRadius" Value="{StaticResource Radius.2Xl}" />
         <Setter Property="Padding" Value="32" />
     </Style>
 

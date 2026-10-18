@@ -89,7 +89,7 @@
         <StackPanel Margin="40,36,40,40">
 
             <!-- Greeting -->
-            <Border Height="150" Margin="0,0,0,24" CornerRadius="{StaticResource Radius.2xl}" ClipToBounds="True">
+            <Border Height="150" Margin="0,0,0,24" CornerRadius="{StaticResource Radius.2Xl}" ClipToBounds="True">
                 <Border.Background>
                     <ImageBrush ImageSource="pack://application:,,,/Resources/Images/glass.jpg" Stretch="UniformToFill" />
                 </Border.Background>
