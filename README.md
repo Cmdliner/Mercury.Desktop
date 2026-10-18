@@ -113,3 +113,11 @@ into a tooltip. Clicking the avatar (top bar) or the owner card (sidebar) opens 
 show or hide amounts, and sign out. Sign out asks for confirmation, then returns to a fresh sign-in screen
 (`WorkspaceViewModel.SignedOut` is handled by `ShellViewModel`). Dialogs are overlays in `WorkspaceView`.
 `BeadIllustration` follows the inherited text colour, so set `Foreground` to use it on a dark surface.
+
+## Clickable rows and details
+
+Every row or card that stands for a thing opens its details in a dialog: a transaction (drawer), a staff member, a
+store, an account and a ledger entry. Make a table row clickable with `Button.TableRow` and a card with
+`Button.Plain`, both with a `CommandParameter="{Binding}"`; the page's view model keeps the `Selected…` item and an
+`Is…Open` flag, and the dialog is an overlay in the page's view. Editing inside these dialogs comes later, once
+roles are enforced.
