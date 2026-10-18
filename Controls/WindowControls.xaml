@@ -1,0 +1,50 @@
+<UserControl x:Class="Mercury.Desktop.Controls.WindowControls"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:Mercury.Desktop.Controls">
+
+    <!--
+        Minimise, maximise/restore and close for a window with a custom title bar. Place it at the
+        top right of a window that uses WindowChrome. It finds its own window, so it needs no wiring.
+    -->
+    <StackPanel Orientation="Horizontal">
+        <Button Click="OnMinimizeClick"
+                Style="{StaticResource Button.Caption}"
+                ToolTip="Minimize">
+            <controls:Icon Width="12"
+                           Height="12"
+                           Data="{StaticResource Icon.Minimize}"
+                           Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                           StrokeThickness="1.6" />
+        </Button>
+
+        <Button Click="OnMaximizeClick" Style="{StaticResource Button.Caption}">
+            <controls:Icon Width="12" Height="12" StrokeThickness="1.6"
+                           Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}">
+                <controls:Icon.Style>
+                    <Style TargetType="controls:Icon" BasedOn="{StaticResource {x:Type controls:Icon}}">
+                        <Setter Property="Data" Value="{StaticResource Icon.Maximize}" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding WindowState, RelativeSource={RelativeSource AncestorType=Window}}" Value="Maximized">
+                                <Setter Property="Data" Value="{StaticResource Icon.Restore}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </controls:Icon.Style>
+            </controls:Icon>
+            <Button.ToolTip>
+                <ToolTip Content="Maximize / Restore" />
+            </Button.ToolTip>
+        </Button>
+
+        <Button Click="OnCloseClick"
+                Style="{StaticResource Button.Caption.Close}"
+                ToolTip="Close">
+            <controls:Icon Width="12"
+                           Height="12"
+                           Data="{StaticResource Icon.Close}"
+                           Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                           StrokeThickness="1.6" />
+        </Button>
+    </StackPanel>
+</UserControl>

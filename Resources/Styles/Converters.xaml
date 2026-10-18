@@ -1,0 +1,11 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:converters="clr-namespace:Mercury.Desktop.Converters">
+
+    <!-- Value converters shared across views. -->
+    <converters:NairaConverter x:Key="Converter.Naira" />
+    <converters:ScaleConverter x:Key="Converter.Scale" />
+    <converters:ResourceKeyConverter x:Key="Converter.Icon" Prefix="Icon." />
+    <BooleanToVisibilityConverter x:Key="Converter.BoolToVisibility" />
+    <converters:InverseBoolToVisibilityConverter x:Key="Converter.InverseBoolToVisibility" />
+</ResourceDictionary>

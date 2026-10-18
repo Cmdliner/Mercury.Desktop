@@ -1,4 +1,6 @@
 #if DEBUG
+using Mercury.Desktop.Models;
+using Mercury.Desktop.ViewModels;
 using Mercury.Desktop.Views.DesignSystem;
 
 namespace Mercury.Desktop.Dev;
@@ -6,7 +8,8 @@ namespace Mercury.Desktop.Dev;
 /// <summary>
 /// Switches that only exist in Debug builds:
 /// <c>dotnet run -- --design-system</c> opens the style gallery, and
-/// <c>dotnet run -- --shots &lt;folder&gt;</c> saves PNGs of every onboarding state.
+/// <c>dotnet run -- --shots &lt;folder&gt;</c> saves PNGs of every onboarding state, and
+/// <c>dotnet run -- --dashboard [--maximize]</c> opens the app already past onboarding.
 /// </summary>
 internal static class DevTools
 {
@@ -16,6 +19,18 @@ internal static class DevTools
         if (args.Contains("--design-system"))
         {
             new DesignSystemWindow().Show();
+            return true;
+        }
+
+        if (args.Contains("--dashboard"))
+        {
+            var window = new MainWindow();
+            ((ShellViewModel)window.DataContext).ShowWorkspace(DemoData.SampleOnboardingResult);
+            if (args.Contains("--maximize"))
+            {
+                window.WindowState = System.Windows.WindowState.Maximized;
+            }
+            window.Show();
             return true;
         }
 

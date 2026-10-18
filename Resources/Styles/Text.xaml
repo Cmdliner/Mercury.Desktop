@@ -60,6 +60,13 @@
         <Setter Property="Foreground" Value="{StaticResource Brush.MutedForeground}" />
     </Style>
 
+    <!-- A large figure, such as a balance on a stat card. -->
+    <Style x:Key="Text.Stat" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource Font.SemiBold}" />
+        <Setter Property="FontSize" Value="28" />
+        <Setter Property="Foreground" Value="{StaticResource Brush.Foreground}" />
+    </Style>
+
     <Style x:Key="Text.Label" TargetType="TextBlock">
         <Setter Property="FontFamily" Value="{StaticResource Font.Medium}" />
         <Setter Property="FontSize" Value="{StaticResource FontSize.Label}" />

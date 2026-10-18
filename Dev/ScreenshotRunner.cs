@@ -4,6 +4,8 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using Mercury.Desktop.Models;
+using Mercury.Desktop.ViewModels;
 using Mercury.Desktop.ViewModels.Onboarding;
 using Mercury.Desktop.Views.DesignSystem;
 
@@ -40,8 +42,16 @@ internal static class ScreenshotRunner
     private static async Task CaptureOnboardingAsync(string folder, Dispatcher dispatcher)
     {
         var window = new MainWindow();
-        var vm = (OnboardingViewModel)window.DataContext;
+        var shell = (ShellViewModel)window.DataContext;
+        var vm = shell.Onboarding;
         window.Show();
+        await SettleAsync(dispatcher);
+
+        Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "login.png"));
+        shell.Login.SignInCommand.Execute(null);
+        await SettleAsync(dispatcher);
+        Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "login-errors.png"));
+        shell.Login.CreateAccountCommand.Execute(null);
         await SettleAsync(dispatcher);
 
         Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "onboarding-1-business.png"));
@@ -91,6 +101,16 @@ internal static class ScreenshotRunner
         vm.ContinueCommand.Execute(null);
         await SettleAsync(dispatcher);
         Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "onboarding-4-finish.png"));
+
+        // Finish onboarding: the shell swaps to the dashboard.
+        shell.ShowWorkspace(DemoData.SampleOnboardingResult);
+        await SettleAsync(dispatcher);
+        Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "dashboard-overview.png"));
+
+        var workspace = (ViewModels.Workspace.WorkspaceViewModel)shell.Current;
+        workspace.ToggleSidebarCommand.Execute(null);
+        await SettleAsync(dispatcher);
+        Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "dashboard-collapsed.png"));
 
         window.Close();
     }

@@ -1,0 +1,186 @@
+<UserControl x:Class="Mercury.Desktop.Views.Workspace.OverviewView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:Mercury.Desktop.Controls"
+             xmlns:models="clr-namespace:Mercury.Desktop.Models"
+             Style="{StaticResource View.StepEntrance}">
+
+    <UserControl.Resources>
+        <!-- A stat card: label, big amount and a short note. -->
+        <DataTemplate DataType="{x:Type models:Stat}">
+            <Border Margin="0,0,16,0"
+                    Padding="24"
+                    CornerRadius="{StaticResource Radius.Xl}"
+                    Style="{StaticResource Surface.Card}">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource Text.Caption}" Text="{Binding Label}" />
+                    <TextBlock Margin="0,14,0,14"
+                               Style="{StaticResource Text.Stat}"
+                               Text="{Binding Amount, Converter={StaticResource Converter.Naira}}" />
+                    <TextBlock Style="{StaticResource Text.Caption}" Text="{Binding Note}" />
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+
+        <!-- One row of recent transactions. -->
+        <DataTemplate DataType="{x:Type models:TransactionSummary}">
+            <Grid Margin="0,0,0,18">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock Style="{StaticResource Text.Label}" Text="{Binding Store}" />
+                    <TextBlock x:Name="Status"
+                               Margin="0,3,0,0"
+                               FontSize="12"
+                               Foreground="{StaticResource Brush.Success}"
+                               Text="{Binding Status}" />
+                </StackPanel>
+                <TextBlock Grid.Column="1"
+                           VerticalAlignment="Top"
+                           FontFamily="{StaticResource Font.Medium}"
+                           Text="{Binding Amount, Converter={StaticResource Converter.Naira}}" />
+            </Grid>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsPending}" Value="True">
+                    <Setter TargetName="Status" Property="Foreground" Value="{StaticResource Brush.SunInk}" />
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+        <!-- One bar of the sales chart. It grows up from the bottom when the page appears. -->
+        <DataTemplate x:Key="SalesBar">
+            <Border x:Name="Bar"
+                    Width="26"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Bottom"
+                    Height="{Binding Converter={StaticResource Converter.Scale}, ConverterParameter=150}"
+                    Background="{StaticResource Brush.Input}"
+                    RenderTransformOrigin="0.5,1">
+                <Border.RenderTransform>
+                    <ScaleTransform ScaleY="0" />
+                </Border.RenderTransform>
+                <Border.Triggers>
+                    <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                                 To="1"
+                                                 Duration="0:0:0.7">
+                                    <DoubleAnimation.EasingFunction>
+                                        <CubicEase EasingMode="EaseOut" />
+                                    </DoubleAnimation.EasingFunction>
+                                </DoubleAnimation>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                </Border.Triggers>
+            </Border>
+            <DataTemplate.Triggers>
+                <Trigger SourceName="Bar" Property="IsMouseOver" Value="True">
+                    <Setter TargetName="Bar" Property="Background" Value="{StaticResource Brush.Foreground}" />
+                </Trigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="40,36,40,40">
+
+            <!-- Greeting -->
+            <TextBlock FontFamily="{StaticResource Font.SemiBold}"
+                       FontSize="28"
+                       Text="{Binding Greeting}" />
+            <TextBlock Margin="0,6,0,28"
+                       Style="{StaticResource Text.Muted}"
+                       Text="{Binding Today}" />
+
+            <!-- Stats -->
+            <ItemsControl Margin="0,0,-16,0" ItemsSource="{Binding Stats}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="3" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+
+            <!-- Sales and recent transactions -->
+            <Grid Margin="0,16,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="16" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+
+                <Border Padding="28"
+                        CornerRadius="{StaticResource Radius.Xl}"
+                        Style="{StaticResource Surface.Card}">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource Text.Heading}" Text="Sales today" />
+                        <TextBlock Margin="0,8,0,24"
+                                   Style="{StaticResource Text.Stat}"
+                                   Text="{Binding SalesToday, Converter={StaticResource Converter.Naira}}" />
+                        <ItemsControl Height="150"
+                                      ItemTemplate="{StaticResource SalesBar}"
+                                      ItemsSource="{Binding SalesBars}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <UniformGrid Rows="1" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="2"
+                        Padding="28"
+                        CornerRadius="{StaticResource Radius.Xl}"
+                        Style="{StaticResource Surface.Card}">
+                    <StackPanel>
+                        <TextBlock Margin="0,0,0,22"
+                                   Style="{StaticResource Text.Heading}"
+                                   Text="Recent transactions" />
+                        <ItemsControl ItemsSource="{Binding RecentTransactions}" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- Reconciliation -->
+            <Border Margin="0,16,0,0"
+                    Padding="28"
+                    Background="{StaticResource Brush.Sidebar}"
+                    CornerRadius="{StaticResource Radius.Xl}">
+                <Grid>
+                    <StackPanel>
+                        <TextBlock FontFamily="{StaticResource Font.Medium}"
+                                   FontSize="16"
+                                   Foreground="{StaticResource Brush.SidebarForeground}"
+                                   Text="Today's reconciliation" />
+                        <TextBlock Margin="0,12,0,6"
+                                   FontFamily="{StaticResource Font.SemiBold}"
+                                   FontSize="28"
+                                   Foreground="{StaticResource Brush.SidebarForeground}"
+                                   Text="{Binding ReconciledAmount, Converter={StaticResource Converter.Naira}}" />
+                        <TextBlock Style="{StaticResource Text.Caption}"
+                                   Foreground="{StaticResource Brush.SidebarMuted}"
+                                   Text="Payments received" />
+                    </StackPanel>
+                    <Border HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Padding="16,8"
+                            Style="{StaticResource Pill.Success}"
+                            Visibility="{Binding IsReconciled, Converter={StaticResource Converter.BoolToVisibility}}">
+                        <StackPanel Orientation="Horizontal">
+                            <controls:Icon Width="14" Height="14"
+                                           Data="{StaticResource Icon.Check}"
+                                           Foreground="{StaticResource Brush.Success}"
+                                           StrokeThickness="2.6" />
+                            <TextBlock Margin="8,0,0,1" Text="Reconciled" />
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

@@ -17,5 +17,9 @@
         <ResourceDictionary Source="Styles/Choices.xaml" />
         <ResourceDictionary Source="Styles/Surfaces.xaml" />
         <ResourceDictionary Source="Styles/Brand.xaml" />
+        <ResourceDictionary Source="Styles/Chrome.xaml" />
+        <ResourceDictionary Source="Styles/Navigation.xaml" />
+        <ResourceDictionary Source="Styles/Scrollbars.xaml" />
+        <ResourceDictionary Source="Styles/Converters.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

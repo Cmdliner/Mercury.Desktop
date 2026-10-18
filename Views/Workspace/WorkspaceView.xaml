@@ -1,0 +1,193 @@
+<UserControl x:Class="Mercury.Desktop.Views.Workspace.WorkspaceView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:Mercury.Desktop.Controls"
+             xmlns:local="clr-namespace:Mercury.Desktop.Views.Workspace"
+             xmlns:vm="clr-namespace:Mercury.Desktop.ViewModels.Workspace">
+
+    <UserControl.Resources>
+        <!-- Which view shows each page. -->
+        <DataTemplate DataType="{x:Type vm:OverviewViewModel}">
+            <local:OverviewView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:PlaceholderPageViewModel}">
+            <local:PlaceholderPageView />
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Sidebar -->
+        <Border Width="260"
+                Background="{StaticResource Brush.Card}"
+                BorderBrush="{StaticResource Brush.Border}"
+                BorderThickness="0,0,1,0"
+                ClipToBounds="True">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsSidebarCollapsed}" Value="True">
+                            <DataTrigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="Width" To="76" Duration="0:0:0.22">
+                                            <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut" /></DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </DataTrigger.EnterActions>
+                            <DataTrigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="Width" To="260" Duration="0:0:0.22">
+                                            <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut" /></DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </DataTrigger.ExitActions>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <Grid Margin="14,0,14,20">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!-- Brand and business -->
+                <StackPanel Margin="16,22,0,0">
+                    <StackPanel Orientation="Horizontal">
+                        <controls:LogoMark Width="24" Height="24" />
+                        <TextBlock Margin="9,0,0,2"
+                                   VerticalAlignment="Center"
+                                   Visibility="{Binding IsSidebarCollapsed, Converter={StaticResource Converter.InverseBoolToVisibility}}"
+                                   FontFamily="{StaticResource Font.SemiBold}"
+                                   FontSize="20"
+                                   Text="mercury" />
+                    </StackPanel>
+                    <TextBlock Margin="0,6,0,0"
+                               Style="{StaticResource Text.Caption}"
+                               Visibility="{Binding IsSidebarCollapsed, Converter={StaticResource Converter.InverseBoolToVisibility}}"
+                               Text="{Binding BusinessName}"
+                               TextTrimming="CharacterEllipsis" />
+                </StackPanel>
+
+                <!-- Navigation -->
+                <ListBox Grid.Row="1"
+                         Margin="0,16,0,0"
+                         ItemsSource="{Binding NavView}"
+                         SelectedItem="{Binding SelectedNavItem}"
+                         Style="{StaticResource ListBox.Navigation}">
+                    <ListBox.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.HeaderTemplate>
+                                <DataTemplate>
+                                    <TextBlock Margin="14,22,0,10"
+                                               Visibility="{Binding DataContext.IsSidebarCollapsed, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource Converter.InverseBoolToVisibility}}"
+                                               Style="{StaticResource Text.Eyebrow}"
+                                               Text="{Binding Name}" />
+                                </DataTemplate>
+                            </GroupStyle.HeaderTemplate>
+                        </GroupStyle>
+                    </ListBox.GroupStyle>
+                </ListBox>
+
+                <!-- Signed-in owner -->
+                <Border Grid.Row="2"
+                        Padding="6"
+                        Background="{StaticResource Brush.SurfaceMuted}">
+                    <StackPanel Orientation="Horizontal">
+                        <Border Style="{StaticResource Surface.Avatar}">
+                            <TextBlock HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Text="{Binding OwnerInitials}" />
+                        </Border>
+                        <StackPanel Margin="12,0,0,0" VerticalAlignment="Center"
+                                    Visibility="{Binding IsSidebarCollapsed, Converter={StaticResource Converter.InverseBoolToVisibility}}">
+                            <TextBlock Style="{StaticResource Text.Label}"
+                                       Text="{Binding OwnerName}"
+                                       TextTrimming="CharacterEllipsis"
+                                       MaxWidth="150" />
+                            <TextBlock Style="{StaticResource Text.Caption}" Text="Owner" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- Main area: top bar, then the page -->
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="64" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <!-- Top bar. Its height matches the window's draggable title area, so it is also the
+                 title bar. Anything you can click must be marked hit-testable in chrome. -->
+            <Border Background="{StaticResource Brush.Card}"
+                    BorderBrush="{StaticResource Brush.Border}"
+                    BorderThickness="0,0,0,1">
+                <Grid Margin="20,0,150,0">
+                    <Button HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Command="{Binding ToggleSidebarCommand}"
+                            Style="{StaticResource Button.Icon}"
+                            ToolTip="Collapse or expand the sidebar"
+                            WindowChrome.IsHitTestVisibleInChrome="True">
+                        <controls:Icon Width="18" Height="18"
+                                       Data="{StaticResource Icon.Sidebar}"
+                                       Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                       StrokeThickness="1.8" />
+                    </Button>
+                    <StackPanel Margin="52,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Style="{StaticResource Text.Heading}" Text="{Binding CurrentPage.Title}" />
+                        <TextBlock Margin="0,2,0,0" Style="{StaticResource Text.Caption}">
+                            <Run Text="Mercury" />
+                            <Run Text="/" />
+                            <Run Text="{Binding CurrentPage.Title, Mode=OneWay}" />
+                        </TextBlock>
+                    </StackPanel>
+
+                    <StackPanel HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                Orientation="Horizontal">
+                        <ComboBox Width="168"
+                                  Height="36"
+                                  controls:InputHelper.Placeholder="All stores"
+                                  SelectedIndex="0"
+                                  WindowChrome.IsHitTestVisibleInChrome="True">
+                            <ComboBoxItem Content="All stores" />
+                            <ComboBoxItem Content="Ikeja" />
+                            <ComboBoxItem Content="Yaba" />
+                            <ComboBoxItem Content="Lekki" />
+                        </ComboBox>
+                        <Button Margin="12,0,0,0"
+                                Style="{StaticResource Button.Icon}"
+                                ToolTip="Search"
+                                WindowChrome.IsHitTestVisibleInChrome="True">
+                            <controls:Icon Width="18" Height="18"
+                                           Data="{StaticResource Icon.Search}"
+                                           Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                           StrokeThickness="1.8" />
+                        </Button>
+                        <Border Margin="8,0,0,0"
+                                Style="{StaticResource Surface.Avatar}"
+                                WindowChrome.IsHitTestVisibleInChrome="True">
+                            <TextBlock HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Text="{Binding OwnerInitials}" />
+                        </Border>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <ContentControl Grid.Row="1" Content="{Binding CurrentPage}" />
+        </Grid>
+    </Grid>
+</UserControl>

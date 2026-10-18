@@ -24,6 +24,17 @@
         <Setter Property="Background" Value="{StaticResource Brush.Border}" />
     </Style>
 
+    <!-- Avatar: a black circle for initials. Size it with Width and Height; the text style is Text.Avatar. -->
+    <Style x:Key="Surface.Avatar" TargetType="Border">
+        <Setter Property="Width" Value="36" />
+        <Setter Property="Height" Value="36" />
+        <Setter Property="Background" Value="{StaticResource Brush.Primary}" />
+        <Setter Property="CornerRadius" Value="{StaticResource Radius.Full}" />
+        <Setter Property="TextElement.Foreground" Value="{StaticResource Brush.PrimaryForeground}" />
+        <Setter Property="TextElement.FontFamily" Value="{StaticResource Font.Medium}" />
+        <Setter Property="TextElement.FontSize" Value="12" />
+    </Style>
+
     <!-- Status pills: use Pill.Success for Active/Reconciled, Pill.Caution for warnings. -->
     <Style x:Key="Pill.Success" TargetType="Border">
         <Setter Property="Background" Value="{StaticResource Brush.SuccessSoft}" />

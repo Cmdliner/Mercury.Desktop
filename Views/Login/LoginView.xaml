@@ -1,0 +1,72 @@
+<UserControl x:Class="Mercury.Desktop.Views.Login.LoginView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:Mercury.Desktop.Controls">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1.1*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- The form -->
+        <StackPanel Width="380"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+            <StackPanel Margin="0,0,0,40" Orientation="Horizontal">
+                <controls:LogoMark Width="28" Height="28" />
+                <TextBlock Margin="10,0,0,2"
+                           VerticalAlignment="Center"
+                           FontFamily="{StaticResource Font.SemiBold}"
+                           FontSize="22"
+                           Text="mercury" />
+            </StackPanel>
+
+            <TextBlock Style="{StaticResource Text.Title}" Text="Welcome back" />
+            <TextBlock Margin="0,8,0,32"
+                       Style="{StaticResource Text.Muted}"
+                       Text="Sign in to see your stores and accounts." />
+
+            <controls:FormField Margin="0,0,0,20" Header="Email">
+                <TextBox controls:InputHelper.Placeholder="owner@yourbusiness.ng"
+                         Text="{Binding EmailAddress, UpdateSourceTrigger=PropertyChanged}" />
+            </controls:FormField>
+
+            <controls:FormField Margin="0,0,0,28" Header="Password">
+                <PasswordBox controls:InputHelper.Placeholder="Your password"
+                             controls:PasswordBoxHelper.BoundPassword="{Binding Password, UpdateSourceTrigger=PropertyChanged}" />
+            </controls:FormField>
+
+            <Button Command="{Binding SignInCommand}"
+                    Content="Sign in"
+                    IsDefault="True"
+                    Style="{StaticResource Button.Primary.Lg}" />
+
+            <StackPanel Margin="0,24,0,0" HorizontalAlignment="Center" Orientation="Horizontal">
+                <TextBlock VerticalAlignment="Center" Style="{StaticResource Text.Muted}" Text="New to Mercury?" />
+                <Button Margin="6,0,0,0"
+                        Command="{Binding CreateAccountCommand}"
+                        Content="Create an account"
+                        Style="{StaticResource Button.Ghost}" />
+            </StackPanel>
+        </StackPanel>
+
+        <!-- Brand panel -->
+        <Border Grid.Column="1" Background="{StaticResource Brush.Sidebar}">
+            <StackPanel MaxWidth="400"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center">
+                <TextBlock FontFamily="{StaticResource Font.SemiBold}"
+                           FontSize="40"
+                           Foreground="{StaticResource Brush.SidebarForeground}"
+                           Text="One set of books."
+                           TextWrapping="Wrap" />
+                <TextBlock Margin="0,16,0,0"
+                           FontSize="16"
+                           Foreground="{StaticResource Brush.SidebarMuted}"
+                           Text="Every store keeps its own accounts and ledger. Mercury brings them together, so you can see where the money is at a glance."
+                           TextWrapping="Wrap" />
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>
