@@ -121,3 +121,20 @@ store, an account and a ledger entry. Make a table row clickable with `Button.Ta
 `Button.Plain`, both with a `CommandParameter="{Binding}"`; the page's view model keeps the `Selected…` item and an
 `Is…Open` flag, and the dialog is an overlay in the page's view. Editing inside these dialogs comes later, once
 roles are enforced.
+
+## Releasing
+
+```
+powershell -ExecutionPolicy Bypass -File installer\build.ps1
+```
+
+This publishes the app as one self-contained `win-x64` exe in `publish/`, then builds the installer
+`dist/Mercury-Setup.exe` with [Inno Setup 6](https://jrsoftware.org/isdl.php) (install it once, for example with
+`winget install JRSoftware.InnoSetup`). Both folders are git-ignored.
+
+- **Icon:** `Resources/App.ico` (the Mercury mark on a near-black tile) is the exe, window, shortcut and installer icon.
+- **Version:** change `<Version>`, `<AssemblyVersion>` and `<FileVersion>` in `Mercury.Desktop.csproj`, and `AppVersion`
+  in `installer/Mercury.iss`, together.
+- **Installer:** per-user by default (no admin prompt), adds a Start menu entry and an optional desktop shortcut, and
+  registers an uninstaller in Settings, Apps.
+- The app and installer are not code-signed yet, so Windows SmartScreen shows a warning on first run.

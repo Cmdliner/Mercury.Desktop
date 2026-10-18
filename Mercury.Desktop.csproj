@@ -7,6 +7,17 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <UseWPF>true</UseWPF>
         <RootNamespace>Mercury.Desktop</RootNamespace>
+
+        <!-- What Windows shows for the app: the file icon, and the Details tab of the exe. -->
+        <ApplicationIcon>Resources/App.ico</ApplicationIcon>
+        <Product>Mercury</Product>
+        <AssemblyTitle>Mercury</AssemblyTitle>
+        <Company>Mercury</Company>
+        <Description>Mercury: finance and expense tracking for businesses that run more than one store.</Description>
+        <Copyright>Copyright (c) 2026 Mercury</Copyright>
+        <Version>0.1.0</Version>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+        <FileVersion>0.1.0.0</FileVersion>
     </PropertyGroup>
 
     <ItemGroup>
@@ -17,6 +28,7 @@
         <!-- Geist is embedded so the app looks the same on every machine (SIL Open Font License). -->
         <Resource Include="Resources\Fonts\*.ttf" />
         <Resource Include="Resources\Images\*.jpg" />
+        <Resource Include="Resources\App.ico" />
         <None Include="Resources\Fonts\OFL.txt" />
     </ItemGroup>
 

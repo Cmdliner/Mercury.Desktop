@@ -10,6 +10,7 @@
         xmlns:workspaceVm="clr-namespace:Mercury.Desktop.ViewModels.Workspace"
         Style="{StaticResource {x:Type Window}}"
         Title="Mercury"
+        Icon="Resources/App.ico"
         Width="1280"
         Height="800"
         MinWidth="1100"
