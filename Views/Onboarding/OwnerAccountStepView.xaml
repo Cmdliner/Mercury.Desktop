@@ -1,0 +1,33 @@
+<UserControl x:Class="Mercury.Desktop.Views.Onboarding.OwnerAccountStepView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:Mercury.Desktop.Controls"
+             Style="{StaticResource View.StepEntrance}">
+
+    <StackPanel>
+        <TextBlock Style="{StaticResource Text.Title}" Text="Create your owner account" />
+        <TextBlock Margin="0,8,0,36"
+                   Style="{StaticResource Text.Muted}"
+                   Text="This account will manage the Mercury workspace." />
+
+        <controls:FormField Margin="0,0,0,20" Header="Full name">
+            <TextBox controls:InputHelper.Placeholder="Abdulazeez Adeyemi"
+                     Text="{Binding FullName, UpdateSourceTrigger=PropertyChanged}" />
+        </controls:FormField>
+
+        <controls:FormField Margin="0,0,0,20" Header="Email">
+            <TextBox controls:InputHelper.Placeholder="owner@yourbusiness.ng"
+                     Text="{Binding EmailAddress, UpdateSourceTrigger=PropertyChanged}" />
+        </controls:FormField>
+
+        <controls:FormField Margin="0,0,0,20" Header="Password">
+            <PasswordBox controls:InputHelper.Placeholder="Create a password"
+                         controls:PasswordBoxHelper.BoundPassword="{Binding Password, UpdateSourceTrigger=PropertyChanged}" />
+        </controls:FormField>
+
+        <controls:FormField Header="Confirm password">
+            <PasswordBox controls:InputHelper.Placeholder="Repeat password"
+                         controls:PasswordBoxHelper.BoundPassword="{Binding ConfirmPassword, UpdateSourceTrigger=PropertyChanged}" />
+        </controls:FormField>
+    </StackPanel>
+</UserControl>

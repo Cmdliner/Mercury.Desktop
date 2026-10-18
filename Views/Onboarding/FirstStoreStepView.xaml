@@ -1,0 +1,35 @@
+<UserControl x:Class="Mercury.Desktop.Views.Onboarding.FirstStoreStepView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:Mercury.Desktop.Controls"
+             Style="{StaticResource View.StepEntrance}">
+
+    <StackPanel>
+        <TextBlock Style="{StaticResource Text.Title}" Text="Create your first store" />
+        <TextBlock Margin="0,8,0,36"
+                   Style="{StaticResource Text.Muted}"
+                   Text="Your first location becomes the first operational workspace." />
+
+        <controls:FormField Margin="0,0,0,20" Header="Store name">
+            <TextBox controls:InputHelper.Placeholder="Adeyemi Stores Ikeja"
+                     Text="{Binding StoreName, UpdateSourceTrigger=PropertyChanged}" />
+        </controls:FormField>
+
+        <controls:FormField Margin="0,0,0,20" Header="Location">
+            <TextBox controls:InputHelper.Placeholder="Ikeja, Lagos"
+                     Text="{Binding Location, UpdateSourceTrigger=PropertyChanged}" />
+        </controls:FormField>
+
+        <controls:FormField Margin="0,0,0,20" Header="Bank">
+            <ComboBox controls:InputHelper.Placeholder="Select a bank"
+                      ItemsSource="{Binding Banks}"
+                      SelectedItem="{Binding Bank}" />
+        </controls:FormField>
+
+        <controls:FormField Header="Virtual account number">
+            <TextBox controls:InputHelper.Placeholder="0123456789"
+                     MaxLength="10"
+                     Text="{Binding VirtualAccountNumber, UpdateSourceTrigger=PropertyChanged}" />
+        </controls:FormField>
+    </StackPanel>
+</UserControl>

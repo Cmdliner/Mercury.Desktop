@@ -1,0 +1,163 @@
+<UserControl x:Class="Mercury.Desktop.Views.Onboarding.OnboardingView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:Mercury.Desktop.Controls"
+             xmlns:local="clr-namespace:Mercury.Desktop.Views.Onboarding"
+             xmlns:vm="clr-namespace:Mercury.Desktop.ViewModels.Onboarding">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+
+        <!--
+            Wraps a form step: the form column on the left, then Back and Continue.
+            The buttons talk to the OnboardingViewModel, found through the view's DataContext.
+        -->
+        <Style x:Key="Onboarding.StepFrame" TargetType="ContentControl">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ContentControl">
+                        <StackPanel Width="460"
+                                    Margin="96,88,0,48"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Top">
+                            <ContentPresenter />
+                            <Grid Margin="0,32,0,0">
+                                <Button HorizontalAlignment="Left"
+                                        Command="{Binding DataContext.BackCommand, RelativeSource={RelativeSource AncestorType={x:Type local:OnboardingView}}}"
+                                        Content="Back"
+                                        Style="{StaticResource Button.Ghost.Lg}"
+                                        Visibility="{Binding DataContext.CanGoBack, RelativeSource={RelativeSource AncestorType={x:Type local:OnboardingView}}, Converter={StaticResource BoolToVisibility}}" />
+                                <Button HorizontalAlignment="Right"
+                                        Command="{Binding DataContext.ContinueCommand, RelativeSource={RelativeSource AncestorType={x:Type local:OnboardingView}}}"
+                                        Content="{Binding DataContext.ContinueLabel, RelativeSource={RelativeSource AncestorType={x:Type local:OnboardingView}}}"
+                                        IsDefault="True"
+                                        Style="{StaticResource Button.Primary.Lg}" />
+                            </Grid>
+                        </StackPanel>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Which view shows each step. The view models never create views themselves. -->
+        <DataTemplate DataType="{x:Type vm:BusinessDetailsStepViewModel}">
+            <ContentControl Style="{StaticResource Onboarding.StepFrame}">
+                <local:BusinessDetailsStepView />
+            </ContentControl>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:OwnerAccountStepViewModel}">
+            <ContentControl Style="{StaticResource Onboarding.StepFrame}">
+                <local:OwnerAccountStepView />
+            </ContentControl>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:FirstStoreStepViewModel}">
+            <ContentControl Style="{StaticResource Onboarding.StepFrame}">
+                <local:FirstStoreStepView />
+            </ContentControl>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:FinishStepViewModel}">
+            <local:FinishStepView />
+        </DataTemplate>
+
+        <!-- One numbered entry in the sidebar. -->
+        <DataTemplate DataType="{x:Type vm:StepIndicatorViewModel}">
+            <Grid Height="28" Margin="0,0,0,26">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="28" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Border x:Name="Circle"
+                        Width="28"
+                        Height="28"
+                        Background="{StaticResource Brush.SidebarStep}"
+                        CornerRadius="{StaticResource Radius.Full}">
+                    <Grid>
+                        <TextBlock x:Name="Number"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   FontFamily="{StaticResource Font.Medium}"
+                                   FontSize="12"
+                                   Foreground="{StaticResource Brush.SidebarMuted}"
+                                   Text="{Binding Number}" />
+                        <controls:Icon x:Name="Tick"
+                                       Width="14"
+                                       Height="14"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Data="{StaticResource Icon.Check}"
+                                       Foreground="{StaticResource Brush.SidebarForeground}"
+                                       StrokeThickness="3"
+                                       Visibility="Collapsed" />
+                    </Grid>
+                </Border>
+
+                <TextBlock x:Name="Label"
+                           Grid.Column="1"
+                           Margin="16,0,0,0"
+                           VerticalAlignment="Center"
+                           FontFamily="{StaticResource Font.Regular}"
+                           FontSize="14"
+                           Foreground="{StaticResource Brush.SidebarMuted}"
+                           Text="{Binding Title}" />
+            </Grid>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding State}" Value="Current">
+                    <Setter TargetName="Circle" Property="Background" Value="{StaticResource Brush.SidebarForeground}" />
+                    <Setter TargetName="Number" Property="Foreground" Value="{StaticResource Brush.Sidebar}" />
+                    <Setter TargetName="Label" Property="Foreground" Value="{StaticResource Brush.SidebarForeground}" />
+                    <Setter TargetName="Label" Property="FontFamily" Value="{StaticResource Font.Medium}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding State}" Value="Complete">
+                    <Setter TargetName="Number" Property="Visibility" Value="Collapsed" />
+                    <Setter TargetName="Tick" Property="Visibility" Value="Visible" />
+                    <Setter TargetName="Label" Property="Foreground" Value="{StaticResource Brush.SidebarForeground}" />
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Sidebar: brand, a short intro and the four steps. Hidden on the finish screen. -->
+        <Border Width="300"
+                Background="{StaticResource Brush.Sidebar}"
+                Visibility="{Binding ShowsSidebar, Converter={StaticResource BoolToVisibility}}">
+            <StackPanel Margin="40,48,40,40">
+                <StackPanel Orientation="Horizontal">
+                    <controls:LogoMark Width="26"
+                                       Height="26"
+                                       Foreground="{StaticResource Brush.SidebarForeground}" />
+                    <TextBlock Margin="10,0,0,2"
+                               VerticalAlignment="Center"
+                               FontFamily="{StaticResource Font.SemiBold}"
+                               FontSize="22"
+                               Foreground="{StaticResource Brush.SidebarForeground}"
+                               Text="mercury" />
+                </StackPanel>
+
+                <TextBlock Margin="0,88,0,0"
+                           FontFamily="{StaticResource Font.SemiBold}"
+                           FontSize="28"
+                           Foreground="{StaticResource Brush.SidebarForeground}"
+                           Text="Set up Mercury" />
+                <TextBlock Margin="0,8,0,0"
+                           FontSize="13"
+                           Foreground="{StaticResource Brush.SidebarMuted}"
+                           Text="Get your workspace ready in a few steps."
+                           TextWrapping="Wrap" />
+
+                <ItemsControl Margin="0,56,0,0" ItemsSource="{Binding Indicators}" />
+            </StackPanel>
+        </Border>
+
+        <ContentControl Grid.Column="1" Content="{Binding CurrentStep}" />
+    </Grid>
+</UserControl>

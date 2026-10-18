@@ -1,0 +1,33 @@
+<UserControl x:Class="Mercury.Desktop.Views.Onboarding.BusinessDetailsStepView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:Mercury.Desktop.Controls"
+             Style="{StaticResource View.StepEntrance}">
+
+    <StackPanel>
+        <TextBlock Style="{StaticResource Text.Title}" Text="Tell us about your business" />
+        <TextBlock Margin="0,8,0,36"
+                   Style="{StaticResource Text.Muted}"
+                   Text="This information appears across your Mercury workspace." />
+
+        <controls:FormField Margin="0,0,0,20" Header="Business name">
+            <TextBox controls:InputHelper.Placeholder="Adeyemi Stores"
+                     Text="{Binding BusinessName, UpdateSourceTrigger=PropertyChanged}" />
+        </controls:FormField>
+
+        <controls:FormField Margin="0,0,0,20" Header="Business email">
+            <TextBox controls:InputHelper.Placeholder="owner@yourbusiness.ng"
+                     Text="{Binding BusinessEmail, UpdateSourceTrigger=PropertyChanged}" />
+        </controls:FormField>
+
+        <controls:FormField Margin="0,0,0,20" Header="Business phone">
+            <TextBox controls:InputHelper.Placeholder="+234 800 000 0000"
+                     Text="{Binding BusinessPhone, UpdateSourceTrigger=PropertyChanged}" />
+        </controls:FormField>
+
+        <controls:FormField Header="Business address">
+            <TextBox controls:InputHelper.Placeholder="Lagos, Nigeria"
+                     Text="{Binding BusinessAddress, UpdateSourceTrigger=PropertyChanged}" />
+        </controls:FormField>
+    </StackPanel>
+</UserControl>
