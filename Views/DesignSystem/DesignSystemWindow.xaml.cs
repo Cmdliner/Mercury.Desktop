@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Windows;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Mercury.Desktop.ViewModels.Workspace;
 
 namespace Mercury.Desktop.Views.DesignSystem;
 
@@ -22,6 +23,14 @@ public partial class DesignSystemWindow : Window
         "Primary", "PrimaryHover", "Secondary", "SecondaryHover",
         "Success", "SuccessSoft", "Sun", "SunSoft", "Destructive",
         "Sidebar", "SidebarMuted", "SidebarStep",
+    ];
+
+    /// <summary>Sample rows for the navigation list.</summary>
+    public IReadOnlyList<NavItemViewModel> NavSamples { get; } =
+    [
+        new("Overview", "Grid", "OPERATIONS", new PlaceholderPageViewModel("Overview", "")),
+        new("Stores", "Store", "OPERATIONS", new PlaceholderPageViewModel("Stores", "")),
+        new("Staff", "Users", "MANAGEMENT", new PlaceholderPageViewModel("Staff", "")),
     ];
 
     public DesignSystemWindow()

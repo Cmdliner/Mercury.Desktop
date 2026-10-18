@@ -214,6 +214,44 @@
 
             <Border Style="{StaticResource Section.Divider}" />
 
+            <!-- Workspace -->
+            <TextBlock Style="{StaticResource Section.Title}" Text="Workspace pieces" />
+            <TextBlock Style="{StaticResource Section.Note}"
+                       Text="What the signed-in app is made of: sidebar navigation, stat cards, the avatar, window caption buttons and the slim scroll bar." />
+            <StackPanel Orientation="Horizontal">
+                <Border Width="240" Padding="16" Background="{StaticResource Brush.Card}"
+                        BorderBrush="{StaticResource Brush.Border}" BorderThickness="1">
+                    <ListBox ItemsSource="{Binding NavSamples, RelativeSource={RelativeSource AncestorType=Window}}"
+                             SelectedIndex="0"
+                             Style="{StaticResource ListBox.Navigation}" />
+                </Border>
+                <StackPanel Margin="32,0,0,0" Width="260">
+                    <Border Padding="24" CornerRadius="{StaticResource Radius.Xl}" Style="{StaticResource Surface.Card}">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource Text.Caption}" Text="Total balance" />
+                            <TextBlock Margin="0,14,0,14" Style="{StaticResource Text.Stat}"
+                                       Text="₦4,820,400" />
+                            <TextBlock Style="{StaticResource Text.Caption}" Text="Across 3 stores" />
+                        </StackPanel>
+                    </Border>
+                    <StackPanel Margin="0,20,0,0" Orientation="Horizontal">
+                        <Border Style="{StaticResource Surface.Avatar}">
+                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="AA" />
+                        </Border>
+                        <controls:WindowControls Margin="24,0,0,0" />
+                    </StackPanel>
+                </StackPanel>
+                <ScrollViewer Margin="32,0,0,0" Width="240" Height="200" VerticalScrollBarVisibility="Visible"
+                              Background="{StaticResource Brush.Card}">
+                    <StackPanel Margin="16">
+                        <TextBlock Style="{StaticResource Text.Body}" TextWrapping="Wrap"
+                                   Text="Scroll bars are a slim rounded thumb on a transparent track, with no arrows. They darken on hover and while dragged. Every scrolling area in the app uses this style, so there is nothing to apply. Keep scrolling to see the thumb move; this paragraph is only here to make the area taller than its frame, which is what makes a scroll bar appear in the first place." />
+                    </StackPanel>
+                </ScrollViewer>
+            </StackPanel>
+
+            <Border Style="{StaticResource Section.Divider}" />
+
             <!-- Brand -->
             <TextBlock Style="{StaticResource Section.Title}" Text="Logo and icons" />
             <TextBlock Style="{StaticResource Section.Note}"
