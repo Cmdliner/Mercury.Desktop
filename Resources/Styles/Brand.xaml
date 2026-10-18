@@ -3,6 +3,7 @@
                     xmlns:controls="clr-namespace:Mercury.Desktop.Controls">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/Mercury.Desktop;component/Resources/Tokens/Tokens.xaml" />
+        <ResourceDictionary Source="/Mercury.Desktop;component/Resources/Styles/Converters.xaml" />
         <!-- FormField uses the Text.Label and Text.Error styles. -->
         <ResourceDictionary Source="/Mercury.Desktop;component/Resources/Styles/Text.xaml" />
     </ResourceDictionary.MergedDictionaries>
@@ -67,7 +68,6 @@
         </Setter>
     </Style>
 
-    <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
 
     <!--
         FormField: label above an input, with the input's validation message below it.
@@ -87,7 +87,7 @@
                         <TextBlock Margin="0,6,0,0"
                                    Style="{StaticResource Text.Error}"
                                    Text="{Binding Content.(Validation.Errors)/ErrorContent, RelativeSource={RelativeSource TemplatedParent}}"
-                                   Visibility="{Binding Content.(Validation.HasError), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BoolToVisibility}}" />
+                                   Visibility="{Binding Content.(Validation.HasError), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource Converter.BoolToVisibility}}" />
                     </StackPanel>
                 </ControlTemplate>
             </Setter.Value>

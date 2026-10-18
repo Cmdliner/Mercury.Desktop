@@ -1,4 +1,3 @@
-using Mercury.Desktop.Models;
 
 namespace Mercury.Desktop.Models;
 

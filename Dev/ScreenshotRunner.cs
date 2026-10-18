@@ -108,6 +108,20 @@ internal static class ScreenshotRunner
         Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "dashboard-overview.png"));
 
         var workspace = (ViewModels.Workspace.WorkspaceViewModel)shell.Current;
+        workspace.SelectedNavItem = workspace.NavItems.First(item => item.Title == "Stores");
+        await SettleAsync(dispatcher);
+        Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "stores.png"));
+        var stores = (ViewModels.Workspace.StoresViewModel)workspace.CurrentPage;
+        stores.OpenAddStoreCommand.Execute(null);
+        await SettleAsync(dispatcher);
+        stores.CreateStoreCommand.Execute(null);
+        await SettleAsync(dispatcher);
+        Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "stores-add.png"));
+        stores.CloseAddStoreCommand.Execute(null);
+        workspace.SelectedNavItem = workspace.NavItems.First(item => item.Title == "Payments");
+        await SettleAsync(dispatcher);
+        Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "payments.png"));
+        workspace.SelectedNavItem = workspace.NavItems[0];
         workspace.ToggleSidebarCommand.Execute(null);
         await SettleAsync(dispatcher);
         Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "dashboard-collapsed.png"));

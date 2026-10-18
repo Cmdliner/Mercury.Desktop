@@ -6,8 +6,6 @@
              xmlns:vm="clr-namespace:Mercury.Desktop.ViewModels.Onboarding">
 
     <UserControl.Resources>
-        <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
-
         <!--
             Wraps a form step: the form column on the left, then Back and Continue.
             The buttons talk to the OnboardingViewModel, found through the view's DataContext.
@@ -26,7 +24,7 @@
                                         Command="{Binding DataContext.BackCommand, RelativeSource={RelativeSource AncestorType={x:Type local:OnboardingView}}}"
                                         Content="Back"
                                         Style="{StaticResource Button.Ghost.Lg}"
-                                        Visibility="{Binding DataContext.CanGoBack, RelativeSource={RelativeSource AncestorType={x:Type local:OnboardingView}}, Converter={StaticResource BoolToVisibility}}" />
+                                        Visibility="{Binding DataContext.CanGoBack, RelativeSource={RelativeSource AncestorType={x:Type local:OnboardingView}}, Converter={StaticResource Converter.BoolToVisibility}}" />
                                 <Button HorizontalAlignment="Right"
                                         Command="{Binding DataContext.ContinueCommand, RelativeSource={RelativeSource AncestorType={x:Type local:OnboardingView}}}"
                                         Content="{Binding DataContext.ContinueLabel, RelativeSource={RelativeSource AncestorType={x:Type local:OnboardingView}}}"
@@ -129,7 +127,7 @@
         <!-- Sidebar: brand, a short intro and the four steps. Hidden on the finish screen. -->
         <Border Width="300"
                 Background="{StaticResource Brush.Sidebar}"
-                Visibility="{Binding ShowsSidebar, Converter={StaticResource BoolToVisibility}}">
+                Visibility="{Binding ShowsSidebar, Converter={StaticResource Converter.BoolToVisibility}}">
             <StackPanel Margin="40,48,40,40">
                 <StackPanel Orientation="Horizontal">
                     <controls:LogoMark Width="26"

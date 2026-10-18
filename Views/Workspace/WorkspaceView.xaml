@@ -10,6 +10,12 @@
         <DataTemplate DataType="{x:Type vm:OverviewViewModel}">
             <local:OverviewView />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:StoresViewModel}">
+            <local:StoresView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:PaymentsViewModel}">
+            <local:PaymentsView />
+        </DataTemplate>
         <DataTemplate DataType="{x:Type vm:PlaceholderPageViewModel}">
             <local:PlaceholderPageView />
         </DataTemplate>

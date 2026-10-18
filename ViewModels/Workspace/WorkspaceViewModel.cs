@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Windows.Data;
 using CommunityToolkit.Mvvm.ComponentModel;
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Input;
 using Mercury.Desktop.Models;
 
@@ -20,11 +21,17 @@ public sealed partial class WorkspaceViewModel : ObservableObject
 
         var firstName = account.Owner.FullName.Split(' ', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() ?? "there";
 
+        // Stores and Payments work on the same list, so adding a store shows up in both.
+        var stores = new ObservableCollection<StoreAccount>(
+        [
+            new(account.Store.Name, account.Store.Location, account.Store.Bank, account.Store.VirtualAccountNumber, 1820400m),
+        ]);
+
         NavItems =
         [
             new("Overview", "Grid", "OPERATIONS", new OverviewViewModel(firstName)),
-            new("Stores", "Store", "OPERATIONS",
-                new PlaceholderPageViewModel("Stores", "Every branch, its balance and its status, in one list.")),
+            new("Stores", "Store", "OPERATIONS", new StoresViewModel(stores)),
+            new("Payments", "Payments", "OPERATIONS", new PaymentsViewModel(stores, account.Business.Name)),
             new("Transactions", "Transfer", "OPERATIONS",
                 new PlaceholderPageViewModel("Transactions", "A full activity log you can filter by store and account.")),
             new("Accounts", "Wallet", "OPERATIONS",

@@ -1,0 +1,101 @@
+<UserControl x:Class="Mercury.Desktop.Views.Workspace.PaymentsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:Mercury.Desktop.Controls"
+             Style="{StaticResource View.StepEntrance}">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="40,36,40,40">
+            <TextBlock FontFamily="{StaticResource Font.SemiBold}" FontSize="28" Text="Receive a payment" />
+            <TextBlock Margin="0,6,0,28"
+                       Style="{StaticResource Text.Muted}"
+                       Text="Give the customer this account. The payment is matched to the store automatically." />
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1.4*" />
+                    <ColumnDefinition Width="16" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel>
+                    <controls:FormField Margin="0,0,0,16" Header="Store">
+                        <ComboBox ItemsSource="{Binding Stores}" SelectedItem="{Binding SelectedStore}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Name}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </controls:FormField>
+
+                    <!-- The account to pay into -->
+                    <Border Padding="32"
+                            Background="{StaticResource Brush.Sidebar}"
+                            CornerRadius="{StaticResource Radius.Xl}">
+                        <StackPanel DataContext="{Binding SelectedStore}">
+                            <TextBlock Style="{StaticResource Text.Caption}"
+                                       Foreground="{StaticResource Brush.SidebarMuted}"
+                                       Text="Pay into this account" />
+                            <TextBlock Margin="0,18,0,0"
+                                       Style="{StaticResource Text.Caption}"
+                                       Foreground="{StaticResource Brush.SidebarMuted}"
+                                       Text="{Binding Bank}" />
+                            <Grid Margin="0,6,0,0">
+                                <TextBlock FontFamily="{StaticResource Font.MonoMedium}"
+                                           FontSize="40"
+                                           Foreground="{StaticResource Brush.SidebarForeground}"
+                                           Text="{Binding AccountNumber}" />
+                                <Button HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        Command="{Binding DataContext.CopyAccountNumberCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        Style="{StaticResource Button.Secondary}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <controls:Icon Width="14" Height="14"
+                                                       Data="{StaticResource Icon.Copy}"
+                                                       Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                                       StrokeThickness="1.8" />
+                                        <TextBlock Margin="8,0,0,1" Text="Copy" />
+                                    </StackPanel>
+                                </Button>
+                            </Grid>
+                            <TextBlock Margin="0,22,0,0"
+                                       Style="{StaticResource Text.Caption}"
+                                       Foreground="{StaticResource Brush.SidebarMuted}"
+                                       Text="Account name" />
+                            <TextBlock Margin="0,4,0,0"
+                                       FontFamily="{StaticResource Font.Medium}"
+                                       FontSize="16"
+                                       Foreground="{StaticResource Brush.SidebarForeground}"
+                                       Text="{Binding DataContext.AccountName, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                        </StackPanel>
+                    </Border>
+                    <TextBlock Margin="0,12,0,0"
+                               Style="{StaticResource Text.Caption}"
+                               Text="Account number copied."
+                               Visibility="{Binding JustCopied, Converter={StaticResource Converter.BoolToVisibility}}" />
+                </StackPanel>
+
+                <!-- How it works -->
+                <Border Grid.Column="2"
+                        Padding="28"
+                        VerticalAlignment="Top"
+                        CornerRadius="{StaticResource Radius.Xl}"
+                        Style="{StaticResource Surface.Card}">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource Text.Heading}" Text="How it works" />
+                        <TextBlock Margin="0,18,0,0" Style="{StaticResource Text.Label}" Text="1. Customer transfers" />
+                        <TextBlock Margin="0,4,0,0" Style="{StaticResource Text.Caption}" TextWrapping="Wrap"
+                                   Text="They send any amount to the account above from their bank app." />
+                        <TextBlock Margin="0,18,0,0" Style="{StaticResource Text.Label}" Text="2. Mercury matches it" />
+                        <TextBlock Margin="0,4,0,0" Style="{StaticResource Text.Caption}" TextWrapping="Wrap"
+                                   Text="The payment is recorded against this store as soon as the bank confirms it." />
+                        <TextBlock Margin="0,18,0,0" Style="{StaticResource Text.Label}" Text="3. It reaches your books" />
+                        <TextBlock Margin="0,4,0,0" Style="{StaticResource Text.Caption}" TextWrapping="Wrap"
+                                   Text="You will see it under Transactions and in the day's reconciliation." />
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
