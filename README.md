@@ -38,7 +38,8 @@ Resources/
   Fonts/                Geist, embedded (SIL Open Font License)
 Controls/               small reusable pieces: Icon, LogoMark, FormField, InputHelper, PasswordBoxHelper, WindowControls
 Converters/             Naira, Scale, ResourceKey (icon lookup), BoolToVisibility and its inverse
-Models/                 plain data (DemoData holds the sample figures the dashboard shows for now)
+Models/                 plain data (DemoData holds the sample figures the pages show for now)
+Services/               app-wide state, such as PrivacySettings
 ViewModels/             logic, one folder per feature: ShellViewModel, Login/, Onboarding/, Workspace/
 Views/                  XAML, one folder per feature: Login/, Onboarding/, Workspace/, DesignSystem/
 Dev/                    Debug-only tools (gallery launcher, screenshot runner)
@@ -93,6 +94,13 @@ backend check yet.
 `PageViewModel` with a matching view in `Views/Workspace`: `OverviewView` is built (stat cards, sales chart,
 recent transactions, reconciliation), and so are `StoresView` (a card per store plus an "Add store" dialog) and
 `PaymentsView` (the account number a customer pays into for the chosen store, with a Copy button). Stores and
-Payments share one list of `StoreAccount`s, so a new store appears in both. Transactions, Accounts and Staff are
-placeholders. The overview uses
+Payments share one list of `StoreAccount`s, so a new store appears in both. `TransactionsView` filters by store, type and status and opens a detail drawer
+with the ledger entries; `AccountsView` shows the accounts with their share of the total and recent ledger entries;
+`StaffView` lists the team with an "Add staff" dialog. `BeadIllustration` is the line-art used for empty states.
+
+### Hiding amounts
+
+The eye button in the top bar masks every money figure (`₦ ••••••`) so nobody reading over your shoulder sees them.
+Show an amount with `<controls:Money Amount="{Binding Balance}" />`, never a plain TextBlock with a converter, or
+it will ignore the switch. The switch is `Services/PrivacySettings`; it resets to visible each time the workspace opens. The overview uses
 sample data from `DemoData` until the backend exists.
