@@ -14,6 +14,8 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ContentControl">
+                        <!-- A tall step scrolls, so Continue is always reachable at the smallest window size. -->
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
                         <StackPanel Width="460"
                                     Margin="96,88,0,48"
                                     HorizontalAlignment="Left"
@@ -27,11 +29,19 @@
                                         Visibility="{Binding DataContext.CanGoBack, RelativeSource={RelativeSource AncestorType={x:Type local:OnboardingView}}, Converter={StaticResource Converter.BoolToVisibility}}" />
                                 <Button HorizontalAlignment="Right"
                                         Command="{Binding DataContext.ContinueCommand, RelativeSource={RelativeSource AncestorType={x:Type local:OnboardingView}}}"
-                                        Content="{Binding DataContext.ContinueLabel, RelativeSource={RelativeSource AncestorType={x:Type local:OnboardingView}}}"
+                                        Content="{Binding DataContext.ContinueText, RelativeSource={RelativeSource AncestorType={x:Type local:OnboardingView}}}"
                                         IsDefault="True"
                                         Style="{StaticResource Button.Primary.Lg}" />
                             </Grid>
+                            <!-- Why creating the workspace failed, if it did. -->
+                            <TextBlock Margin="0,16,0,0"
+                                       HorizontalAlignment="Right"
+                                       Style="{StaticResource Text.Error}"
+                                       Text="{Binding DataContext.ErrorMessage, RelativeSource={RelativeSource AncestorType={x:Type local:OnboardingView}}}"
+                                       TextWrapping="Wrap"
+                                       Visibility="{Binding DataContext.HasError, RelativeSource={RelativeSource AncestorType={x:Type local:OnboardingView}}, Converter={StaticResource Converter.BoolToVisibility}}" />
                         </StackPanel>
+                        </ScrollViewer>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -53,6 +63,12 @@
         <DataTemplate DataType="{x:Type vm:FirstStoreStepViewModel}">
             <ContentControl Style="{StaticResource Onboarding.StepFrame}">
                 <local:FirstStoreStepView />
+            </ContentControl>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:PaymentAccountStepViewModel}">
+            <ContentControl Style="{StaticResource Onboarding.StepFrame}">
+                <local:PaymentAccountStepView />
             </ContentControl>
         </DataTemplate>
 

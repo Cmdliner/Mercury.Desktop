@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using Mercury.Desktop.Services;
 
 namespace Mercury.Desktop;
 
@@ -25,6 +26,9 @@ public partial class App : Application
         // Developer switches: --design-system opens the style gallery, --shots <folder> saves PNGs.
         if (Dev.DevTools.TryHandle(e.Args, this)) return;
 #endif
+
+        // Opened from an invitation link (mercury://accept-invitation?token=...).
+        AppServices.PendingInvitationToken = InvitationLink.FromCommandLine(e.Args);
 
         new MainWindow().Show();
     }

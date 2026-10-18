@@ -15,6 +15,9 @@ public abstract class OnboardingStepViewModel : ObservableValidator
     /// <summary>Whether the dark stepper sidebar is shown beside this step.</summary>
     public virtual bool ShowsSidebar => true;
 
+    /// <summary>False once going back would repeat something that cannot be repeated.</summary>
+    public virtual bool AllowsBack => true;
+
     /// <summary>
     /// Checks every field, which also reveals messages on fields the user has not touched.
     /// Returns true when the step can be left.

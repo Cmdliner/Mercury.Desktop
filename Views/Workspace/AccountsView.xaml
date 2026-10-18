@@ -67,7 +67,8 @@
     </UserControl.Resources>
 
     <Grid>
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  Visibility="{Binding IsLoaded, Converter={StaticResource Converter.BoolToVisibility}}">
         <StackPanel Margin="40,36,24,40">
             <Grid Margin="0,0,16,28">
                 <StackPanel>
@@ -108,10 +109,39 @@
                         <TextBlock Grid.Column="4" HorizontalAlignment="Right" Style="{StaticResource Text.Eyebrow}" Text="AMOUNT" />
                     </Grid>
                     <ItemsControl ItemsSource="{Binding Entries}" />
+                    <TextBlock Margin="24,8,24,24" Style="{StaticResource Text.Muted}"
+                               Text="Money moving between your accounts will be listed here."
+                               Visibility="{Binding HasEntries, Converter={StaticResource Converter.InverseBoolToVisibility}}" />
                 </StackPanel>
             </Border>
         </StackPanel>
     </ScrollViewer>
+
+        <!-- While the accounts load -->
+        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource Text.Muted}"
+                   Text="Loading your accounts..."
+                   Visibility="{Binding IsLoading, Converter={StaticResource Converter.BoolToVisibility}}" />
+
+        <!-- If they could not be loaded -->
+        <StackPanel MaxWidth="420" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Visibility="{Binding HasError, Converter={StaticResource Converter.BoolToVisibility}}">
+            <controls:BeadIllustration Width="200" Height="150" HorizontalAlignment="Center" />
+            <TextBlock Margin="0,8,0,0" HorizontalAlignment="Center" Style="{StaticResource Text.Heading}" Text="We could not load your accounts" />
+            <TextBlock Margin="0,8,0,20" HorizontalAlignment="Center" Style="{StaticResource Text.Muted}"
+                       Text="{Binding ErrorMessage}" TextAlignment="Center" TextWrapping="Wrap" />
+            <Button HorizontalAlignment="Center" Command="{Binding LoadCommand}" Content="Try again"
+                    Style="{StaticResource Button.Outline}" />
+        </StackPanel>
+
+        <!-- A business with no stores has no accounts yet -->
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Visibility="{Binding HasNoAccounts, Converter={StaticResource Converter.BoolToVisibility}}">
+            <controls:BeadIllustration Width="200" Height="150" HorizontalAlignment="Center" />
+            <TextBlock Margin="0,8,0,0" HorizontalAlignment="Center" Style="{StaticResource Text.Heading}" Text="No accounts yet" />
+            <TextBlock Margin="0,6,0,0" HorizontalAlignment="Center" Style="{StaticResource Text.Muted}"
+                       Text="Accounts appear once you have added a store." />
+        </StackPanel>
+
         <!-- Detail dialog -->
         <Grid Background="#B30A0A0A"
               Visibility="{Binding IsAccountOpen, Converter={StaticResource Converter.BoolToVisibility}}">

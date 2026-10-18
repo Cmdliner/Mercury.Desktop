@@ -18,7 +18,8 @@ public sealed record Transaction(
     string Customer,
     DateTime Created,
     string DebitAccount,
-    string CreditAccount)
+    string CreditAccount,
+    Guid Id = default)
 {
     public string StatusText => Status.ToString();
 
@@ -28,17 +29,22 @@ public sealed record Transaction(
 /// <summary>A person who works in the business and what they are allowed to see.</summary>
 public sealed record StaffMember(string Name, string Email, string Role, string Store, string Access)
 {
-    /// <summary>What this person can do, in plain words, based on their access level.</summary>
-    public IReadOnlyList<string> Capabilities => Access switch
+    /// <summary>What this person can do, in plain words, based on their role.</summary>
+    public IReadOnlyList<string> Capabilities => Role switch
     {
-        "Full" =>
+        "Owner" =>
         [
-            "See every store and account they manage",
-            "Take payments and record transactions",
-            "Add and manage staff",
-            "Change store settings",
+            "See every store, account and transaction",
+            "Create stores and add payment accounts",
+            "Invite and manage staff",
         ],
-        "Financial" =>
+        "Manager" =>
+        [
+            "Take payments and see transactions for their store",
+            "See their store's accounts",
+            "Invite cashiers to their store",
+        ],
+        "Accountant" =>
         [
             "See the books of every store",
             "View transactions and ledger entries",

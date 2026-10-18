@@ -40,7 +40,7 @@ Resources/
 Controls/               small reusable pieces: Icon, LogoMark, FormField, InputHelper, PasswordBoxHelper, WindowControls
 Converters/             Naira, Scale, ResourceKey (icon lookup), BoolToVisibility and its inverse
 Models/                 plain data (DemoData holds the sample figures the pages show for now)
-Services/               app-wide state, such as PrivacySettings
+Services/               app-wide state (PrivacySettings, TokenStore, Permissions) and Api/, the connection to the server
 ViewModels/             logic, one folder per feature: ShellViewModel, Login/, Onboarding/, Workspace/
 Views/                  XAML, one folder per feature: Login/, Onboarding/, Workspace/, DesignSystem/
 Dev/                    Debug-only tools (gallery launcher, screenshot runner)
@@ -72,7 +72,7 @@ View models derive from `ObservableValidator` (CommunityToolkit.Mvvm) and use da
 
 ## Onboarding
 
-Four steps: Business details, Owner account, First store, Finish. `OnboardingViewModel` owns the steps and
+Five steps: Business details, Owner account, First store, Payment account, Finish. `OnboardingViewModel` owns the steps and
 raises `Completed` with an `OnboardingResult`; the matching view for each step is chosen by the DataTemplates in
 `OnboardingView.xaml`, so view models never create views. Sending the result to the backend is still to do.
 
@@ -95,7 +95,7 @@ backend check yet.
 `PageViewModel` with a matching view in `Views/Workspace`: `OverviewView` is built (stat cards, sales chart,
 recent transactions, reconciliation), and so are `StoresView` (a card per store plus an "Add store" dialog) and
 `PaymentsView` (the account number a customer pays into for the chosen store, with a Copy button). Stores and
-Payments share one list of `StoreAccount`s, so a new store appears in both. `TransactionsView` filters by store, type and status and opens a detail drawer
+Payments share one `StoreDirectory` read from the server, so a new store or account appears in both. `TransactionsView` filters by store, type and status and opens a detail drawer
 with the ledger entries; `AccountsView` shows the accounts with their share of the total and recent ledger entries;
 `StaffView` lists the team with an "Add staff" dialog. `BeadIllustration` is the line-art used for empty states.
 
@@ -138,3 +138,51 @@ This publishes the app as one self-contained `win-x64` exe in `publish/`, then b
 - **Installer:** per-user by default (no admin prompt), adds a Start menu entry and an optional desktop shortcut, and
   registers an uninstaller in Settings, Apps.
 - The app and installer are not code-signed yet, so Windows SmartScreen shows a warning on first run.
+
+## Talking to the server
+
+The app reads and writes through `Services/Api`. View models depend on `IMercuryApi`, never on HTTP:
+
+- `HttpMercuryApi` (over `ApiClient`) is the real server. The address comes from the `MERCURY_API_URL` environment variable
+  and defaults to `http://localhost:5100/`.
+- `DemoMercuryApi` serves built-in sample data. The developer switches (`--dashboard`, `--shots`, `--design-system`) use it,
+  so every screen can be reviewed without a server.
+- `ApiClient` adds the sign-in token, reads the JSON and turns every failure into an `ApiException` whose message is
+  ready to show. A rejected token raises `Unauthorized`, and `ShellViewModel` returns to sign-in.
+- `Dtos.cs` mirrors `Mercury.Api/DTOs`; keep the two in step.
+
+**Signing in.** The token is stored encrypted for the current Windows user (`TokenStore`, in `%LOCALAPPDATA%\Mercury`), so the
+next launch goes straight in. `ShellViewModel.InitializeAsync` checks it with `GET /auth/me`; signing out clears it.
+
+**Onboarding** creates the business when the first-store step is completed (`POST /auth/register/merchant`, then
+`POST /merchant/stores`), so the later screens only appear once it exists; going back from the payment step is disabled for
+the same reason. The payment-account step then asks for the first store's account (`POST /stores/{id}/collection-accounts`):
+a Mercury account (the owner's BVN, bank and account number, passed to the provider and not kept) or one the business already
+uses, or "Skip for now" to do it later from Payments. Passwords are checked against the server's rule (`PasswordPolicy`)
+before they are sent.
+
+**Joining from an invitation.** Sign-in has "Join with your invitation": paste the link or code, choose a password
+(`POST /auth/invitations/accept`) and the person is signed in. The installer registers `mercury://` links, so opening an
+invitation link starts the app on the same screen with the code already filled in (`InvitationLink`,
+`AppServices.PendingInvitationToken`). Opening a link while Mercury is already running starts a second window; there is no
+single-instance hand-over yet.
+
+**Roles.** `GET /auth/me` says the role; `Permissions` decides which pages and buttons it gets (Owner and Manager all pages;
+Accountant no Payments or Staff; Cashier no Accounts or Staff; only Owner adds stores; Owner and Manager invite staff). This
+hides what a person cannot use. The server enforces the same rules.
+
+**What is live.** The overview, Stores, Payments, Transactions and Accounts are read from the server, each with a loading state
+and a retry. Stores (`GET /merchant/stores`) shows each store with its balance (hidden for cashiers) and the accounts it
+collects into; Payments shows the account a customer pays into for the chosen store, and lets an owner add one: a Mercury
+account (BVN, bank and account number, passed to the provider and not kept; it stays "Setting up" until the bank confirms) or
+an account the business already uses. Transactions (`GET /transactions`, `/transactions/{id}`) filters by store and type on
+the server and by status here, and opens the ledger entries behind a row; Accounts (`GET /accounts`) shows the money-holding
+accounts with their share of the total and the latest ledger entries. Staff (`GET /staff`) lists the team the person may
+see, and "Add staff" sends an invitation (`POST /staff/invitations`): the invited person is not on the list until they
+accept and choose their own password. An owner can invite managers, cashiers and accountants; a manager can only invite
+cashiers, and only to their own store, so that choice is locked. Every page is now read from the server.
+`PageViewModel.IsSampleData` and the "Sample data" label remain for any page that is ever added before it is wired.
+
+**Invitations and email.** The server emails the invitation when an SMTP server is set up (see the backend README, which covers
+Gmail); the email carries the code and a `mercury://` link. Until then the server only logs the link, so it has to be passed
+to the person by hand.

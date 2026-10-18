@@ -6,68 +6,94 @@
              Style="{StaticResource View.StepEntrance}">
 
     <UserControl.Resources>
-        <!-- One store: where it is, the account it takes payments into, and what it holds. -->
-        <DataTemplate DataType="{x:Type models:StoreAccount}">
+        <!-- One store: where it is, whether it can take payments, what it holds and where it collects. -->
+        <DataTemplate DataType="{x:Type models:StoreInfo}">
             <Button Command="{Binding DataContext.OpenDetailCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                     CommandParameter="{Binding}"
                     Style="{StaticResource Button.Plain}">
-            <Border Width="340"
-                    Margin="0,0,16,16"
-                    Padding="0"
-                    CornerRadius="{StaticResource Radius.Xl}"
-                    Style="{StaticResource Surface.Card}">
-                <StackPanel>
-                    <Border Height="96" CornerRadius="12,12,0,0">
-                        <Border.Background>
-                            <ImageBrush ImageSource="pack://application:,,,/Resources/Images/stores.jpg" Stretch="UniformToFill" />
-                        </Border.Background>
-                        <Border CornerRadius="12,12,0,0" Background="#40000000" />
-                    </Border>
-                    <StackPanel Margin="24">
-                    <Grid>
-                        <StackPanel>
-                            <TextBlock MaxWidth="210" HorizontalAlignment="Left"
-                                       Style="{StaticResource Text.Heading}"
-                                       Text="{Binding Name}"
-                                       TextTrimming="CharacterEllipsis" />
-                            <TextBlock Margin="0,4,0,0" Style="{StaticResource Text.Caption}" Text="{Binding Location}" />
-                        </StackPanel>
-                        <Border HorizontalAlignment="Right" VerticalAlignment="Top" Style="{StaticResource Pill.Success}">
-                            <TextBlock Text="Active" />
+                <Border Width="340"
+                        Margin="0,0,16,16"
+                        Padding="0"
+                        CornerRadius="{StaticResource Radius.Xl}"
+                        Style="{StaticResource Surface.Card}">
+                    <StackPanel>
+                        <Border Height="96" CornerRadius="12,12,0,0">
+                            <Border.Background>
+                                <ImageBrush ImageSource="pack://application:,,,/Resources/Images/stores.jpg" Stretch="UniformToFill" />
+                            </Border.Background>
+                            <Border Background="#40000000" CornerRadius="12,12,0,0" />
                         </Border>
-                    </Grid>
-                    <TextBlock Margin="0,24,0,0" Style="{StaticResource Text.Caption}" Text="Balance" />
-                    <controls:Money Margin="0,4,0,20"
-                               Style="{StaticResource Text.Stat}"
-                               Amount="{Binding Balance}" />
-                    <Border Style="{StaticResource Surface.Divider}" />
-                    <Grid Margin="0,16,0,0">
-                        <TextBlock Style="{StaticResource Text.Caption}" Text="{Binding Bank}" />
-                        <TextBlock HorizontalAlignment="Right"
-                                   FontFamily="{StaticResource Font.Mono}"
-                                   FontSize="13"
-                                   Text="{Binding AccountNumber}" />
-                    </Grid>
+                        <StackPanel Margin="24">
+                            <Grid>
+                                <StackPanel>
+                                    <TextBlock MaxWidth="190"
+                                               HorizontalAlignment="Left"
+                                               Style="{StaticResource Text.Heading}"
+                                               Text="{Binding Name}"
+                                               TextTrimming="CharacterEllipsis" />
+                                    <TextBlock Margin="0,4,0,0" Style="{StaticResource Text.Caption}" Text="{Binding Location}" />
+                                </StackPanel>
+                                <Border HorizontalAlignment="Right" VerticalAlignment="Top" Style="{StaticResource Pill.Success}"
+                                        Visibility="{Binding IsActive, Converter={StaticResource Converter.BoolToVisibility}}">
+                                    <TextBlock Text="{Binding StatusLabel}" />
+                                </Border>
+                                <Border HorizontalAlignment="Right" VerticalAlignment="Top" Style="{StaticResource Pill.Caution}"
+                                        Visibility="{Binding IsNotActive, Converter={StaticResource Converter.BoolToVisibility}}">
+                                    <TextBlock Text="{Binding StatusLabel}" />
+                                </Border>
+                            </Grid>
+
+                            <StackPanel Visibility="{Binding HasBalance, Converter={StaticResource Converter.BoolToVisibility}}">
+                                <TextBlock Margin="0,24,0,0" Style="{StaticResource Text.Caption}" Text="Balance" />
+                                <controls:Money Margin="0,4,0,0" Amount="{Binding BalanceValue}" Style="{StaticResource Text.Stat}" />
+                            </StackPanel>
+
+                            <Border Margin="0,20,0,16" Style="{StaticResource Surface.Divider}" />
+                            <Grid>
+                                <TextBlock Style="{StaticResource Text.Caption}" Text="{Binding BankLine}" />
+                                <TextBlock HorizontalAlignment="Right"
+                                           FontFamily="{StaticResource Font.Mono}"
+                                           FontSize="13"
+                                           Text="{Binding NumberLine}" />
+                            </Grid>
+                        </StackPanel>
                     </StackPanel>
-                </StackPanel>
-            </Border>
+                </Border>
             </Button>
+        </DataTemplate>
+
+        <!-- One collection account in a store's detail. -->
+        <DataTemplate DataType="{x:Type models:CollectionAccountInfo}">
+            <Border Margin="0,0,0,10" Padding="14,12" Background="{StaticResource Brush.SurfaceMuted}">
+                <Grid>
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource Text.Label}" Text="{Binding Summary}" />
+                        <TextBlock Margin="0,2,0,0" Style="{StaticResource Text.Caption}">
+                            <Run Text="{Binding KindLabel, Mode=OneWay}" /><Run Text=" · " /><Run Text="{Binding AccountName, Mode=OneWay}" />
+                        </TextBlock>
+                    </StackPanel>
+                    <TextBlock HorizontalAlignment="Right" VerticalAlignment="Top" Style="{StaticResource Text.Caption}"
+                               Text="{Binding StatusLabel}" />
+                </Grid>
+            </Border>
         </DataTemplate>
     </UserControl.Resources>
 
     <Grid>
-        <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                      Visibility="{Binding Directory.IsLoaded, Converter={StaticResource Converter.BoolToVisibility}}">
             <StackPanel Margin="40,36,24,40">
                 <Grid Margin="0,0,16,28">
                     <StackPanel>
                         <TextBlock FontFamily="{StaticResource Font.SemiBold}" FontSize="28" Text="Your stores" />
                         <TextBlock Margin="0,6,0,0"
                                    Style="{StaticResource Text.Muted}"
-                                   Text="Each store has its own virtual account, so payments are never mixed up." />
+                                   Text="Each store collects into its own accounts, so payments are never mixed up." />
                     </StackPanel>
                     <Button HorizontalAlignment="Right"
                             VerticalAlignment="Center"
                             Command="{Binding OpenAddStoreCommand}"
+                            Visibility="{Binding CanAddStore, Converter={StaticResource Converter.BoolToVisibility}}"
                             Style="{StaticResource Button.Primary}">
                         <StackPanel Orientation="Horizontal">
                             <controls:Icon Width="14" Height="14"
@@ -86,99 +112,113 @@
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                 </ItemsControl>
+
+                <!-- No stores yet -->
+                <StackPanel Margin="0,40,0,0" HorizontalAlignment="Center"
+                            Visibility="{Binding Directory.HasNoStores, Converter={StaticResource Converter.BoolToVisibility}}">
+                    <controls:BeadIllustration Width="200" Height="150" />
+                    <TextBlock Margin="0,8,0,0" HorizontalAlignment="Center" Style="{StaticResource Text.Heading}" Text="No stores yet" />
+                    <TextBlock Margin="0,6,0,0" HorizontalAlignment="Center" Style="{StaticResource Text.Muted}"
+                               Text="Add your first store to start collecting payments." />
+                </StackPanel>
             </StackPanel>
         </ScrollViewer>
 
+        <!-- While the stores load -->
+        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource Text.Muted}"
+                   Text="Loading your stores..."
+                   Visibility="{Binding Directory.IsLoading, Converter={StaticResource Converter.BoolToVisibility}}" />
+
+        <!-- If they could not be loaded -->
+        <StackPanel MaxWidth="420" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Visibility="{Binding Directory.HasError, Converter={StaticResource Converter.BoolToVisibility}}">
+            <controls:BeadIllustration Width="200" Height="150" HorizontalAlignment="Center" />
+            <TextBlock Margin="0,8,0,0" HorizontalAlignment="Center" Style="{StaticResource Text.Heading}" Text="We could not load your stores" />
+            <TextBlock Margin="0,8,0,20" HorizontalAlignment="Center" Style="{StaticResource Text.Muted}"
+                       Text="{Binding Directory.ErrorMessage}" TextAlignment="Center" TextWrapping="Wrap" />
+            <Button HorizontalAlignment="Center" Command="{Binding ReloadCommand}" Content="Try again"
+                    Style="{StaticResource Button.Outline}" />
+        </StackPanel>
+
+        <!-- Store details -->
+        <Grid Background="#B30A0A0A"
+              Visibility="{Binding IsDetailOpen, Converter={StaticResource Converter.BoolToVisibility}}">
+            <Border Width="460" MaxHeight="620" Padding="32" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    CornerRadius="{StaticResource Radius.Xl}" Style="{StaticResource Surface.Card}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel DataContext="{Binding Selected}">
+                        <Grid>
+                            <TextBlock Style="{StaticResource Text.Subtitle}" Text="Store details" />
+                            <Button HorizontalAlignment="Right" VerticalAlignment="Top"
+                                    Command="{Binding DataContext.CloseDetailCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                    Style="{StaticResource Button.Icon}" ToolTip="Close">
+                                <controls:Icon Width="16" Height="16" Data="{StaticResource Icon.Close}"
+                                               Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                               StrokeThickness="1.8" />
+                            </Button>
+                        </Grid>
+                        <Border Margin="0,20,0,0" Height="110" CornerRadius="10">
+                            <Border.Background>
+                                <ImageBrush ImageSource="pack://application:,,,/Resources/Images/stores.jpg" Stretch="UniformToFill" />
+                            </Border.Background>
+                        </Border>
+                        <TextBlock Margin="0,18,0,0" Style="{StaticResource Text.Heading}" Text="{Binding Name}" />
+                        <TextBlock Margin="0,4,0,0" Style="{StaticResource Text.Caption}" Text="{Binding Location}" />
+
+                        <StackPanel Visibility="{Binding HasBalance, Converter={StaticResource Converter.BoolToVisibility}}">
+                            <controls:Money Margin="0,18,0,2" Amount="{Binding BalanceValue}" Style="{StaticResource Text.Stat}" />
+                            <TextBlock Style="{StaticResource Text.Caption}" Text="Current balance" />
+                        </StackPanel>
+
+                        <Border Margin="0,22,0,22" Style="{StaticResource Surface.Divider}" />
+                        <TextBlock Margin="0,0,0,12" Style="{StaticResource Text.Heading}" Text="Where it collects" />
+                        <ItemsControl ItemsSource="{Binding Accounts}" />
+                        <TextBlock Style="{StaticResource Text.Muted}" TextWrapping="Wrap"
+                                   Text="No payment account yet. Add one from the Payments page."
+                                   Visibility="{Binding HasNoAccount, Converter={StaticResource Converter.BoolToVisibility}}" />
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+
         <!-- Add store dialog -->
-        <Grid Background="#990F0F0F"
+        <Grid Background="#B30A0A0A"
               Visibility="{Binding IsAdding, Converter={StaticResource Converter.BoolToVisibility}}">
-            <Border Width="480"
-                    Padding="32"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    CornerRadius="{StaticResource Radius.Xl}"
-                    Style="{StaticResource Surface.Card}">
-                <StackPanel DataContext="{Binding Form}">
+            <Border Width="480" Padding="32" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    CornerRadius="{StaticResource Radius.Xl}" Style="{StaticResource Surface.Card}">
+                <StackPanel>
                     <Grid>
                         <StackPanel>
                             <TextBlock Style="{StaticResource Text.Subtitle}" Text="Add store" />
                             <TextBlock Margin="0,6,0,0" Style="{StaticResource Text.Muted}" Text="Create another Mercury location." />
                         </StackPanel>
-                        <Button HorizontalAlignment="Right"
-                                VerticalAlignment="Top"
-                                Command="{Binding DataContext.CloseAddStoreCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                Style="{StaticResource Button.Icon}"
-                                ToolTip="Close">
-                            <controls:Icon Width="16" Height="16"
-                                           Data="{StaticResource Icon.Close}"
-                                           Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                                           StrokeThickness="1.8" />
-                        </Button>
-                    </Grid>
-
-                    <controls:FormField Margin="0,28,0,18" Header="Store name">
-                        <TextBox controls:InputHelper.Placeholder="Mercury Lekki"
-                                 Text="{Binding StoreName, UpdateSourceTrigger=PropertyChanged}" />
-                    </controls:FormField>
-                    <controls:FormField Margin="0,0,0,18" Header="Location">
-                        <TextBox controls:InputHelper.Placeholder="Lekki, Lagos"
-                                 Text="{Binding Location, UpdateSourceTrigger=PropertyChanged}" />
-                    </controls:FormField>
-                    <controls:FormField Margin="0,0,0,28" Header="Virtual account">
-                        <TextBox controls:InputHelper.Placeholder="10-digit account number"
-                                 Text="{Binding VirtualAccountNumber, UpdateSourceTrigger=PropertyChanged}" />
-                    </controls:FormField>
-
-                    <Button HorizontalAlignment="Right"
-                            Command="{Binding DataContext.CreateStoreCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                            Content="Create store"
-                            Style="{StaticResource Button.Primary.Lg}" />
-                </StackPanel>
-            </Border>
-        </Grid>
-        <!-- Detail dialog -->
-        <Grid Background="#B30A0A0A"
-              Visibility="{Binding IsDetailOpen, Converter={StaticResource Converter.BoolToVisibility}}">
-            <Border Width="460" Padding="32" HorizontalAlignment="Center" VerticalAlignment="Center"
-                    CornerRadius="{StaticResource Radius.Xl}" Style="{StaticResource Surface.Card}">
-                <StackPanel DataContext="{Binding Selected}">
-                    <Grid>
-                        <TextBlock Style="{StaticResource Text.Subtitle}" Text="Store details" />
                         <Button HorizontalAlignment="Right" VerticalAlignment="Top"
-                                Command="{Binding DataContext.CloseDetailCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                Command="{Binding CloseAddStoreCommand}"
                                 Style="{StaticResource Button.Icon}" ToolTip="Close">
                             <controls:Icon Width="16" Height="16" Data="{StaticResource Icon.Close}"
                                            Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
                                            StrokeThickness="1.8" />
                         </Button>
                     </Grid>
-                    <Border Margin="0,20,0,0" Height="110" CornerRadius="10">
-                        <Border.Background>
-                            <ImageBrush ImageSource="pack://application:,,,/Resources/Images/stores.jpg" Stretch="UniformToFill" />
-                        </Border.Background>
-                    </Border>
-                    <TextBlock Margin="0,18,0,0" Style="{StaticResource Text.Heading}" Text="{Binding Name}" />
-                    <Border Margin="0,8,0,0" HorizontalAlignment="Left" Style="{StaticResource Pill.Success}">
-                        <TextBlock Text="Active" />
-                    </Border>
-                    <controls:Money Margin="0,18,0,2" Amount="{Binding Balance}" Style="{StaticResource Text.Stat}" />
-                    <TextBlock Margin="0,0,0,22" Style="{StaticResource Text.Caption}" Text="Current balance" />
-                    <Border Margin="0,0,0,22" Style="{StaticResource Surface.Divider}" />
-                    <Grid Margin="0,0,0,14">
-                            <Grid.ColumnDefinitions><ColumnDefinition Width="130" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
-                            <TextBlock Style="{StaticResource Text.Caption}" Text="Location" />
-                            <TextBlock Grid.Column="1" Style="{StaticResource Text.Label}" Text="{Binding Location}" />
-                        </Grid>
-                    <Grid Margin="0,0,0,14">
-                            <Grid.ColumnDefinitions><ColumnDefinition Width="130" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
-                            <TextBlock Style="{StaticResource Text.Caption}" Text="Bank" />
-                            <TextBlock Grid.Column="1" Style="{StaticResource Text.Label}" Text="{Binding Bank}" />
-                        </Grid>
-                    <Grid Margin="0,0,0,14">
-                            <Grid.ColumnDefinitions><ColumnDefinition Width="130" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
-                            <TextBlock Style="{StaticResource Text.Caption}" Text="Account number" />
-                            <TextBlock Grid.Column="1" FontFamily="{StaticResource Font.Mono}" FontSize="13" Text="{Binding AccountNumber}" />
-                        </Grid>
+
+                    <StackPanel DataContext="{Binding Form}">
+                        <controls:FormField Margin="0,28,0,18" Header="Store name">
+                            <TextBox controls:InputHelper.Placeholder="Mercury Lekki"
+                                     Text="{Binding StoreName, UpdateSourceTrigger=PropertyChanged}" />
+                        </controls:FormField>
+                        <controls:FormField Margin="0,0,0,8" Header="Location">
+                            <TextBox controls:InputHelper.Placeholder="Lekki, Lagos"
+                                     Text="{Binding Location, UpdateSourceTrigger=PropertyChanged}" />
+                        </controls:FormField>
+                    </StackPanel>
+
+                    <TextBlock Margin="0,12,0,0" Style="{StaticResource Text.Error}" Text="{Binding FormError}" TextWrapping="Wrap"
+                               Visibility="{Binding HasFormError, Converter={StaticResource Converter.BoolToVisibility}}" />
+
+                    <Button Margin="0,24,0,0" HorizontalAlignment="Right"
+                            Command="{Binding CreateStoreCommand}"
+                            Content="{Binding CreateLabel}"
+                            Style="{StaticResource Button.Primary.Lg}" />
                 </StackPanel>
             </Border>
         </Grid>

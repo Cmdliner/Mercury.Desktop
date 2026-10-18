@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Mercury.Desktop.Models;
+using Mercury.Desktop.Services;
 
 namespace Mercury.Desktop.ViewModels.Onboarding;
 
@@ -25,6 +26,7 @@ public partial class OwnerAccountStepViewModel : OnboardingStepViewModel
     [NotifyDataErrorInfo]
     [Required(ErrorMessage = "Create a password")]
     [MinLength(8, ErrorMessage = "Use at least 8 characters")]
+    [RegularExpression(PasswordPolicy.Pattern, ErrorMessage = PasswordPolicy.Message)]
     private string _password = string.Empty;
 
     [ObservableProperty]

@@ -1,15 +1,18 @@
 ﻿using System.Windows;
+using Mercury.Desktop.Services;
 using Mercury.Desktop.ViewModels;
 
 namespace Mercury.Desktop;
 
 public partial class MainWindow : Window
 {
-    public MainWindow()
+    public MainWindow(ShellViewModel? shellViewModel = null)
     {
         InitializeComponent();
         FitToWorkArea();
-        DataContext = new ShellViewModel();
+        var shell = shellViewModel ?? new ShellViewModel(AppServices.CreateApi(), new TokenStore());
+        DataContext = shell;
+        Loaded += async (_, _) => await shell.InitializeAsync();
         StateChanged += (_, _) => FitToScreen();
     }
 

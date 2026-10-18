@@ -46,7 +46,8 @@
     </UserControl.Resources>
 
     <Grid>
-        <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                      Visibility="{Binding ShowContent, Converter={StaticResource Converter.BoolToVisibility}}">
             <StackPanel Margin="40,36,40,40">
                 <TextBlock FontFamily="{StaticResource Font.SemiBold}" FontSize="28" Text="Transactions" />
                 <TextBlock Margin="0,6,0,24" Style="{StaticResource Text.Muted}"
@@ -87,14 +88,31 @@
                         <StackPanel Margin="0,24,0,48" HorizontalAlignment="Center"
                                     Visibility="{Binding HasResults, Converter={StaticResource Converter.InverseBoolToVisibility}}">
                             <controls:BeadIllustration Width="200" Height="150" />
-                            <TextBlock Margin="0,8,0,0" HorizontalAlignment="Center" Style="{StaticResource Text.Heading}" Text="Nothing matches" />
+                            <TextBlock Margin="0,8,0,0" HorizontalAlignment="Center" Style="{StaticResource Text.Heading}" Text="{Binding EmptyTitle}" />
                             <TextBlock Margin="0,6,0,0" HorizontalAlignment="Center" Style="{StaticResource Text.Muted}"
-                                       Text="Try a different store, type or status." />
+                                       Text="{Binding EmptyMessage}" />
                         </StackPanel>
                     </StackPanel>
                 </Border>
             </StackPanel>
         </ScrollViewer>
+
+
+        <!-- While the transactions load -->
+        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource Text.Muted}"
+                   Text="Loading your transactions..."
+                   Visibility="{Binding ShowLoading, Converter={StaticResource Converter.BoolToVisibility}}" />
+
+        <!-- If they could not be loaded -->
+        <StackPanel MaxWidth="420" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Visibility="{Binding ShowError, Converter={StaticResource Converter.BoolToVisibility}}">
+            <controls:BeadIllustration Width="200" Height="150" HorizontalAlignment="Center" />
+            <TextBlock Margin="0,8,0,0" HorizontalAlignment="Center" Style="{StaticResource Text.Heading}" Text="We could not load your transactions" />
+            <TextBlock Margin="0,8,0,20" HorizontalAlignment="Center" Style="{StaticResource Text.Muted}"
+                       Text="{Binding ErrorMessage}" TextAlignment="Center" TextWrapping="Wrap" />
+            <Button HorizontalAlignment="Center" Command="{Binding LoadCommand}" Content="Try again"
+                    Style="{StaticResource Button.Outline}" />
+        </StackPanel>
 
         <!-- Detail drawer -->
         <Grid Background="#990F0F0F"
@@ -155,7 +173,7 @@
                                 <TextBlock Style="{StaticResource Text.Label}" Text="{Binding Method}" />
                             </StackPanel>
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Style="{StaticResource DetailLabel}" Text="Customer" />
+                                <TextBlock Style="{StaticResource DetailLabel}" Text="Details" />
                                 <TextBlock Style="{StaticResource Text.Label}" Text="{Binding Customer}" />
                             </StackPanel>
                         </StackPanel>

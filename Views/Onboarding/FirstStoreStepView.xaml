@@ -15,21 +15,9 @@
                      Text="{Binding StoreName, UpdateSourceTrigger=PropertyChanged}" />
         </controls:FormField>
 
-        <controls:FormField Margin="0,0,0,20" Header="Location">
+        <controls:FormField Header="Location">
             <TextBox controls:InputHelper.Placeholder="Ikeja, Lagos"
                      Text="{Binding Location, UpdateSourceTrigger=PropertyChanged}" />
-        </controls:FormField>
-
-        <controls:FormField Margin="0,0,0,20" Header="Bank">
-            <ComboBox controls:InputHelper.Placeholder="Select a bank"
-                      ItemsSource="{Binding Banks}"
-                      SelectedItem="{Binding Bank}" />
-        </controls:FormField>
-
-        <controls:FormField Header="Virtual account number">
-            <TextBox controls:InputHelper.Placeholder="0123456789"
-                     MaxLength="10"
-                     Text="{Binding VirtualAccountNumber, UpdateSourceTrigger=PropertyChanged}" />
         </controls:FormField>
     </StackPanel>
 </UserControl>

@@ -85,7 +85,9 @@
         </DataTemplate>
     </UserControl.Resources>
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <Grid>
+    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  Visibility="{Binding IsLoaded, Converter={StaticResource Converter.BoolToVisibility}}">
         <StackPanel Margin="40,36,40,40">
 
             <!-- Greeting -->
@@ -160,6 +162,10 @@
                                    Style="{StaticResource Text.Heading}"
                                    Text="Recent transactions" />
                         <ItemsControl ItemsSource="{Binding RecentTransactions}" />
+                        <TextBlock Style="{StaticResource Text.Muted}"
+                                   Text="Payments will appear here as they arrive."
+                                   TextWrapping="Wrap"
+                                   Visibility="{Binding HasRecentTransactions, Converter={StaticResource Converter.InverseBoolToVisibility}}" />
                     </StackPanel>
                 </Border>
             </Grid>
@@ -174,31 +180,52 @@
                         <TextBlock FontFamily="{StaticResource Font.Medium}"
                                    FontSize="16"
                                    Foreground="{StaticResource Brush.SidebarForeground}"
-                                   Text="Today's reconciliation" />
+                                   Text="Recorded in the ledger today" />
                         <controls:Money Margin="0,12,0,6"
                                    FontFamily="{StaticResource Font.SemiBold}"
                                    FontSize="28"
                                    Foreground="{StaticResource Brush.SidebarForeground}"
-                                   Amount="{Binding ReconciledAmount}" />
+                                   Amount="{Binding SalesToday}" />
                         <TextBlock Style="{StaticResource Text.Caption}"
                                    Foreground="{StaticResource Brush.SidebarMuted}"
-                                   Text="Payments received" />
+                                   Text="Sales posted today" />
                     </StackPanel>
                     <Border HorizontalAlignment="Right"
                             VerticalAlignment="Center"
                             Padding="16,8"
-                            Style="{StaticResource Pill.Success}"
-                            Visibility="{Binding IsReconciled, Converter={StaticResource Converter.BoolToVisibility}}">
+                            Style="{StaticResource Pill.Success}">
                         <StackPanel Orientation="Horizontal">
                             <controls:Icon Width="14" Height="14"
                                            Data="{StaticResource Icon.Check}"
                                            Foreground="{StaticResource Brush.Success}"
                                            StrokeThickness="2.6" />
-                            <TextBlock Margin="8,0,0,1" Text="Reconciled" />
+                            <TextBlock Margin="8,0,0,1" Text="Balanced" />
                         </StackPanel>
                     </Border>
                 </Grid>
             </Border>
         </StackPanel>
     </ScrollViewer>
+
+    <!-- While the figures load -->
+    <TextBlock HorizontalAlignment="Center"
+               VerticalAlignment="Center"
+               Style="{StaticResource Text.Muted}"
+               Text="Loading your figures..."
+               Visibility="{Binding IsLoading, Converter={StaticResource Converter.BoolToVisibility}}" />
+
+    <!-- If they could not be loaded -->
+    <StackPanel MaxWidth="420"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Visibility="{Binding HasError, Converter={StaticResource Converter.BoolToVisibility}}">
+        <controls:BeadIllustration Width="200" Height="150" HorizontalAlignment="Center" />
+        <TextBlock Margin="0,8,0,0" HorizontalAlignment="Center" Style="{StaticResource Text.Heading}"
+                   Text="We could not load your overview" />
+        <TextBlock Margin="0,8,0,20" HorizontalAlignment="Center" Style="{StaticResource Text.Muted}"
+                   Text="{Binding ErrorMessage}" TextAlignment="Center" TextWrapping="Wrap" />
+        <Button HorizontalAlignment="Center" Command="{Binding LoadCommand}" Content="Try again"
+                Style="{StaticResource Button.Outline}" />
+    </StackPanel>
+    </Grid>
 </UserControl>

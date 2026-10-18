@@ -37,8 +37,14 @@
                              controls:PasswordBoxHelper.BoundPassword="{Binding Password, UpdateSourceTrigger=PropertyChanged}" />
             </controls:FormField>
 
+            <TextBlock Margin="0,0,0,16"
+                       Style="{StaticResource Text.Error}"
+                       Text="{Binding Message}"
+                       TextWrapping="Wrap"
+                       Visibility="{Binding HasMessage, Converter={StaticResource Converter.BoolToVisibility}}" />
+
             <Button Command="{Binding SignInCommand}"
-                    Content="Sign in"
+                    Content="{Binding SignInLabel}"
                     IsDefault="True"
                     Style="{StaticResource Button.Primary.Lg}" />
 
@@ -49,32 +55,15 @@
                         Content="Create an account"
                         Style="{StaticResource Button.Ghost}" />
             </StackPanel>
+            <StackPanel Margin="0,4,0,0" HorizontalAlignment="Center" Orientation="Horizontal">
+                <TextBlock VerticalAlignment="Center" Style="{StaticResource Text.Muted}" Text="Invited by your team?" />
+                <Button Margin="6,0,0,0"
+                        Command="{Binding HaveInvitationCommand}"
+                        Content="Join with your invitation"
+                        Style="{StaticResource Button.Ghost}" />
+            </StackPanel>
         </StackPanel>
 
-        <!-- Brand panel: the glass texture, the bead and the pitch -->
-        <Grid Grid.Column="1" Background="{StaticResource Brush.Sidebar}" ClipToBounds="True">
-            <Border Opacity="0.32">
-                <Border.Background>
-                    <ImageBrush ImageSource="pack://application:,,,/Resources/Images/glass.jpg" Stretch="UniformToFill" />
-                </Border.Background>
-            </Border>
-            <controls:BeadIllustration Width="300" Height="225" Margin="0,0,-40,-30"
-                                       HorizontalAlignment="Right" VerticalAlignment="Bottom"
-                                       Foreground="{StaticResource Brush.SidebarForeground}" Opacity="0.5" />
-            <StackPanel MaxWidth="400"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center">
-                <TextBlock FontFamily="{StaticResource Font.SemiBold}"
-                           FontSize="40"
-                           Foreground="{StaticResource Brush.SidebarForeground}"
-                           Text="One set of books."
-                           TextWrapping="Wrap" />
-                <TextBlock Margin="0,16,0,0"
-                           FontSize="16"
-                           Foreground="{StaticResource Brush.SidebarMuted}"
-                           Text="Every store keeps its own accounts and ledger. Mercury brings them together, so you can see where the money is at a glance."
-                           TextWrapping="Wrap" />
-            </StackPanel>
-        </Grid>
+        <controls:AuthBrandPanel Grid.Column="1" />
     </Grid>
 </UserControl>

@@ -1,5 +1,7 @@
 #if DEBUG
 using Mercury.Desktop.Models;
+using Mercury.Desktop.Services;
+using Mercury.Desktop.Services.Api;
 using Mercury.Desktop.ViewModels;
 using Mercury.Desktop.Views.DesignSystem;
 
@@ -25,7 +27,7 @@ internal static class DevTools
         if (args.Contains("--login-errors"))
         {
             // Opens sign-in already showing its validation errors, for checking them on the real screen.
-            var window = new MainWindow();
+            var window = new MainWindow(new ShellViewModel(new DemoMercuryApi()));
             ((ShellViewModel)window.DataContext).Login.SignInCommand.Execute(null);
             window.Show();
             return true;
@@ -33,8 +35,8 @@ internal static class DevTools
 
         if (args.Contains("--dashboard"))
         {
-            var window = new MainWindow();
-            ((ShellViewModel)window.DataContext).ShowWorkspace(DemoData.SampleOnboardingResult);
+            var window = new MainWindow(new ShellViewModel(new DemoMercuryApi()));
+            ((ShellViewModel)window.DataContext).ShowWorkspace(DemoData.SampleMe);
             if (args.Contains("--maximize"))
             {
                 window.WindowState = System.Windows.WindowState.Maximized;

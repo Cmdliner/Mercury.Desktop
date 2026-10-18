@@ -1,37 +1,30 @@
 using System.ComponentModel.DataAnnotations;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Mercury.Desktop.Models;
 
 namespace Mercury.Desktop.ViewModels.Workspace;
 
-/// <summary>The "Add store" form: a name, a place and the virtual account for the new store.</summary>
+/// <summary>
+/// The "Add store" form: a name and a place. The store's payment account is added afterwards on
+/// the Payments page, once the store exists.
+/// </summary>
 public sealed partial class AddStoreFormViewModel : ObservableValidator
 {
-    // TODO: the virtual account and its bank will be issued by the backend; for now they are typed in.
-    private const string DefaultBank = "GTBank";
-
     [ObservableProperty]
     [NotifyDataErrorInfo]
     [Required(ErrorMessage = "Enter a store name")]
+    [MaxLength(50, ErrorMessage = "Keep the name under 50 characters")]
     private string _storeName = string.Empty;
 
     [ObservableProperty]
     [NotifyDataErrorInfo]
     [Required(ErrorMessage = "Enter the store's location")]
+    [MaxLength(128, ErrorMessage = "Keep the location under 128 characters")]
     private string _location = string.Empty;
 
-    [ObservableProperty]
-    [NotifyDataErrorInfo]
-    [Required(ErrorMessage = "Enter the virtual account number")]
-    [RegularExpression(@"^\d{10}$", ErrorMessage = "Use the 10-digit account number")]
-    private string _virtualAccountNumber = string.Empty;
-
-    /// <returns>The new store, or null when the form still has errors.</returns>
-    public StoreAccount? TryCreate()
+    /// <returns>The trimmed name and location, or null while the form still has errors.</returns>
+    public (string Name, string Location)? TryGet()
     {
         ValidateAllProperties();
-        return HasErrors
-            ? null
-            : new StoreAccount(StoreName.Trim(), Location.Trim(), DefaultBank, VirtualAccountNumber.Trim(), 0m);
+        return HasErrors ? null : (StoreName.Trim(), Location.Trim());
     }
 }

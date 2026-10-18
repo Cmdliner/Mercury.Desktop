@@ -36,5 +36,11 @@ Source: "{#Publish}\{#AppExe}"; DestDir: "{app}"; Flags: ignoreversion
 Name: "{autoprograms}\{#AppName}"; Filename: "{app}\{#AppExe}"
 Name: "{autodesktop}\{#AppName}"; Filename: "{app}\{#AppExe}"; Tasks: desktopicon
 
+[Registry]
+; Makes mercury:// links open the app, so an invitation link joins straight away.
+Root: HKA; Subkey: "Software\Classes\mercury"; ValueType: string; ValueData: "URL:Mercury"; Flags: uninsdeletekey
+Root: HKA; Subkey: "Software\Classes\mercury"; ValueName: "URL Protocol"; ValueType: string; ValueData: ""
+Root: HKA; Subkey: "Software\Classes\mercury\shell\open\command"; ValueType: string; ValueData: """{app}\{#AppExe}"" ""%1"""
+
 [Run]
 Filename: "{app}\{#AppExe}"; Description: "Launch Mercury"; Flags: nowait postinstall skipifsilent

@@ -1,0 +1,59 @@
+<UserControl x:Class="Mercury.Desktop.Views.Onboarding.PaymentAccountStepView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:Mercury.Desktop.Controls"
+             Style="{StaticResource View.StepEntrance}">
+
+    <StackPanel>
+        <TextBlock Style="{StaticResource Text.Title}" Text="Where does this store get paid?" />
+        <TextBlock Margin="0,8,0,28"
+                   Style="{StaticResource Text.Muted}"
+                   Text="Customers need an account number to pay into. You can add more later from Payments."
+                   TextWrapping="Wrap" />
+
+        <CheckBox IsChecked="{Binding UseMercuryAccount}" Content="Create a Mercury account for this store" />
+
+        <!-- A Mercury account needs identity to open -->
+        <StackPanel DataContext="{Binding MercuryForm}"
+                    Visibility="{Binding DataContext.UseMercuryAccount, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource Converter.BoolToVisibility}}">
+            <TextBlock Margin="0,12,0,20" Style="{StaticResource Text.Caption}" TextWrapping="Wrap"
+                       Text="The bank needs your BVN and the account it belongs to. We pass them on to verify you and never keep the BVN." />
+            <controls:FormField Margin="0,0,0,20" Header="BVN">
+                <TextBox controls:InputHelper.Placeholder="11 digits" MaxLength="11"
+                         Text="{Binding Bvn, UpdateSourceTrigger=PropertyChanged}" />
+            </controls:FormField>
+            <controls:FormField Margin="0,0,0,20" Header="Bank your BVN is linked to">
+                <ComboBox controls:InputHelper.Placeholder="Choose a bank"
+                          ItemsSource="{Binding Banks}" SelectedItem="{Binding Bank}" />
+            </controls:FormField>
+            <controls:FormField Header="Account number">
+                <TextBox controls:InputHelper.Placeholder="10 digits" MaxLength="10"
+                         Text="{Binding AccountNumber, UpdateSourceTrigger=PropertyChanged}" />
+            </controls:FormField>
+        </StackPanel>
+
+        <!-- An account the business already uses -->
+        <StackPanel DataContext="{Binding LinkForm}"
+                    Visibility="{Binding DataContext.UseMercuryAccount, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource Converter.InverseBoolToVisibility}}">
+            <TextBlock Margin="0,12,0,20" Style="{StaticResource Text.Caption}" TextWrapping="Wrap"
+                       Text="Record an account you already collect into, such as OPay or Moniepoint. Mercury will track what goes through it." />
+            <controls:FormField Margin="0,0,0,20" Header="Bank or wallet">
+                <ComboBox controls:InputHelper.Placeholder="Choose a bank"
+                          ItemsSource="{Binding Banks}" SelectedItem="{Binding Bank}" />
+            </controls:FormField>
+            <controls:FormField Margin="0,0,0,20" Header="Account number">
+                <TextBox controls:InputHelper.Placeholder="10 digits" MaxLength="10"
+                         Text="{Binding AccountNumber, UpdateSourceTrigger=PropertyChanged}" />
+            </controls:FormField>
+            <controls:FormField Header="Name on the account">
+                <TextBox controls:InputHelper.Placeholder="Adeyemi Stores"
+                         Text="{Binding AccountName, UpdateSourceTrigger=PropertyChanged}" />
+            </controls:FormField>
+        </StackPanel>
+
+        <Button Margin="0,20,0,0" HorizontalAlignment="Left"
+                Command="{Binding SkipCommand}"
+                Content="Skip for now"
+                Style="{StaticResource Button.Ghost}" />
+    </StackPanel>
+</UserControl>

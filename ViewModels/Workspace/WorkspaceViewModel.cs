@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Input;
 using Mercury.Desktop.Models;
 using Mercury.Desktop.Services;
+using Mercury.Desktop.Services.Api;
 
 namespace Mercury.Desktop.ViewModels.Workspace;
 
@@ -14,30 +15,41 @@ namespace Mercury.Desktop.ViewModels.Workspace;
 /// </summary>
 public sealed partial class WorkspaceViewModel : ObservableObject
 {
-    public WorkspaceViewModel(OnboardingResult account)
+    public WorkspaceViewModel(MeResponse me, IMercuryApi api)
     {
-        BusinessName = account.Business.Name;
-        OwnerName = account.Owner.FullName;
-        OwnerInitials = InitialsOf(account.Owner.FullName);
-        OwnerEmail = account.Owner.Email;
+        // Pages that are not read from the server yet still show built-in sample figures. Against a
+        // real server they say so; in sample mode everything is sample anyway.
+        var isLive = !api.IsDemo;
 
-        var firstName = account.Owner.FullName.Split(' ', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() ?? "there";
+        BusinessName = me.BusinessName;
+        OwnerName = me.Name;
+        OwnerInitials = InitialsOf(me.Name);
+        OwnerEmail = me.Email;
+        Role = me.Role;
 
-        // Stores and Payments work on the same list, so adding a store shows up in both.
-        var stores = new ObservableCollection<StoreAccount>(
+        var firstName = me.Name.Split(' ', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() ?? "there";
+
+        // Stores, Payments and the staff invitation form share one list of stores, read from the server.
+        var stores = new StoreDirectory(api);
+
+        var transactions = new TransactionsViewModel(api, stores);
+        var accounts = new AccountsViewModel(api);
+        var staff = new StaffViewModel(api, stores, me) { CanInvite = Permissions.CanInviteStaff(me.Role) };
+
+        List<NavItemViewModel> pages =
         [
-            new(account.Store.Name, account.Store.Location, account.Store.Bank, account.Store.VirtualAccountNumber, 1820400m),
-        ]);
-
-        NavItems =
-        [
-            new("Overview", "Grid", "OPERATIONS", new OverviewViewModel(firstName)),
-            new("Stores", "Store", "OPERATIONS", new StoresViewModel(stores)),
-            new("Payments", "Payments", "OPERATIONS", new PaymentsViewModel(stores, account.Business.Name)),
-            new("Transactions", "Transfer", "OPERATIONS", new TransactionsViewModel(DemoData.Transactions)),
-            new("Accounts", "Wallet", "OPERATIONS", new AccountsViewModel(DemoData.Accounts, DemoData.LedgerEntries)),
-            new("Staff", "Users", "MANAGEMENT", new StaffViewModel(DemoData.Staff, stores)),
+            new("Overview", "Grid", "OPERATIONS", new OverviewViewModel(firstName, api)),
+            new("Stores", "Store", "OPERATIONS",
+                new StoresViewModel(stores) { CanAddStore = Permissions.CanCreateStores(me.Role) }),
+            new("Payments", "Payments", "OPERATIONS",
+                new PaymentsViewModel(stores, me.BusinessName) { CanAddAccount = Permissions.CanCreateStores(me.Role) }),
+            new("Transactions", "Transfer", "OPERATIONS", transactions),
+            new("Accounts", "Wallet", "OPERATIONS", accounts),
+            new("Staff", "Users", "MANAGEMENT", staff),
         ];
+
+        // Each role only gets the pages it can use.
+        NavItems = pages.Where(p => Permissions.CanSee(me.Role, p.Title)).ToList();
 
         // A grouped view lets the sidebar show a heading above each section.
         NavView = CollectionViewSource.GetDefaultView(NavItems);
@@ -45,6 +57,15 @@ public sealed partial class WorkspaceViewModel : ObservableObject
 
         PrivacySettings.Instance.AmountsHidden = false;
         _selectedNavItem = NavItems[0];
+
+        // The overview reads from the server; start it now so it is ready when the page opens.
+        _ = ((OverviewViewModel)pages[0].Page).LoadCommand.ExecuteAsync(null);
+        _ = stores.LoadAsync();
+        _ = transactions.LoadAsync();
+        // Cashiers have no Accounts page, and the server would refuse them.
+        if (Permissions.CanSee(me.Role, Permissions.Accounts)) _ = accounts.LoadAsync();
+        // The server refuses the staff list to accountants and cashiers, who have no Staff page either.
+        if (Permissions.CanSee(me.Role, Permissions.Staff)) _ = staff.LoadAsync();
     }
 
     public string BusinessName { get; }
@@ -54,6 +75,18 @@ public sealed partial class WorkspaceViewModel : ObservableObject
     public string OwnerInitials { get; }
 
     public string OwnerEmail { get; }
+
+    public StaffRole Role { get; }
+
+    public string RoleLabel => Role.ToString();
+
+    public string RoleDescription => Role switch
+    {
+        StaffRole.Owner => "Owner, full access",
+        StaffRole.Manager => "Manager of one store",
+        StaffRole.Accountant => "Accountant, read-only",
+        _ => "Cashier at one store",
+    };
 
     /// <summary>Raised once the owner has confirmed they want to sign out.</summary>
     public event EventHandler? SignedOut;

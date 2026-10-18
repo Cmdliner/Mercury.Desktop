@@ -1,0 +1,57 @@
+<UserControl x:Class="Mercury.Desktop.Views.Login.AcceptInvitationView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:Mercury.Desktop.Controls">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1.1*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Width="380" Margin="0,48" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <StackPanel Margin="0,0,0,40" Orientation="Horizontal">
+                    <controls:LogoMark Width="28" Height="28" />
+                    <TextBlock Margin="10,0,0,2" VerticalAlignment="Center"
+                               FontFamily="{StaticResource Font.SemiBold}" FontSize="22" Text="mercury" />
+                </StackPanel>
+
+                <TextBlock Style="{StaticResource Text.Title}" Text="Join your team" />
+                <TextBlock Margin="0,8,0,32" Style="{StaticResource Text.Muted}" TextWrapping="Wrap"
+                           Text="Choose a password to finish joining. Nobody else will ever see it." />
+
+                <controls:FormField Margin="0,0,0,20" Header="Invitation link or code"
+                                    Visibility="{Binding AsksForCode, Converter={StaticResource Converter.BoolToVisibility}}">
+                    <TextBox controls:InputHelper.Placeholder="Paste it here"
+                             Text="{Binding Invitation, UpdateSourceTrigger=PropertyChanged}" />
+                </controls:FormField>
+
+                <controls:FormField Margin="0,0,0,20" Header="Password">
+                    <PasswordBox controls:InputHelper.Placeholder="Choose a password"
+                                 controls:PasswordBoxHelper.BoundPassword="{Binding Password, UpdateSourceTrigger=PropertyChanged}" />
+                </controls:FormField>
+
+                <controls:FormField Margin="0,0,0,28" Header="Confirm password">
+                    <PasswordBox controls:InputHelper.Placeholder="Repeat your password"
+                                 controls:PasswordBoxHelper.BoundPassword="{Binding ConfirmPassword, UpdateSourceTrigger=PropertyChanged}" />
+                </controls:FormField>
+
+                <TextBlock Margin="0,0,0,16" Style="{StaticResource Text.Error}" Text="{Binding Message}" TextWrapping="Wrap"
+                           Visibility="{Binding HasMessage, Converter={StaticResource Converter.BoolToVisibility}}" />
+
+                <Button Command="{Binding AcceptCommand}"
+                        Content="{Binding AcceptLabel}"
+                        IsDefault="True"
+                        Style="{StaticResource Button.Primary.Lg}" />
+
+                <Button Margin="0,20,0,0" HorizontalAlignment="Center"
+                        Command="{Binding BackCommand}"
+                        Content="Back to sign in"
+                        Style="{StaticResource Button.Ghost}" />
+            </StackPanel>
+        </ScrollViewer>
+
+        <controls:AuthBrandPanel Grid.Column="1" />
+    </Grid>
+</UserControl>

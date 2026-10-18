@@ -5,6 +5,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Mercury.Desktop.Models;
+using Mercury.Desktop.Services.Api;
 using Mercury.Desktop.ViewModels;
 using Mercury.Desktop.ViewModels.Onboarding;
 using Mercury.Desktop.Views.DesignSystem;
@@ -28,6 +29,9 @@ internal static class ScreenshotRunner
         {
             await CaptureOnboardingAsync(folder, app.Dispatcher);
             await CaptureGalleryAsync(folder, app.Dispatcher);
+            await CaptureInvitationAsync(folder, app.Dispatcher);
+            await CaptureOfflineAsync(folder, app.Dispatcher);
+            await CaptureCashierAsync(folder, app.Dispatcher);
         }
         catch (Exception ex)
         {
@@ -41,7 +45,7 @@ internal static class ScreenshotRunner
 
     private static async Task CaptureOnboardingAsync(string folder, Dispatcher dispatcher)
     {
-        var window = new MainWindow();
+        var window = new MainWindow(new ShellViewModel(new DemoMercuryApi()));
         var shell = (ShellViewModel)window.DataContext;
         var vm = shell.Onboarding;
         window.Show();
@@ -73,37 +77,43 @@ internal static class ScreenshotRunner
         var owner = (OwnerAccountStepViewModel)vm.CurrentStep;
         owner.FullName = "Abdulazeez Adeyemi";
         owner.EmailAddress = "owner@adeyemistores";
-        owner.Password = "mercury-2026";
-        owner.ConfirmPassword = "mercury-20";
+        owner.Password = "Mercury-2026!";
+        owner.ConfirmPassword = "Mercury-20!";
         vm.ContinueCommand.Execute(null);
         await SettleAsync(dispatcher);
         Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "onboarding-2b-owner-errors.png"));
 
         owner.EmailAddress = "owner@adeyemistores.ng";
-        owner.ConfirmPassword = "mercury-2026";
+        owner.ConfirmPassword = "Mercury-2026!";
         vm.ContinueCommand.Execute(null);
         await SettleAsync(dispatcher);
         Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "onboarding-3-store.png"));
 
         var store = (FirstStoreStepViewModel)vm.CurrentStep;
-        store.StoreName = "Adeyemi Stores Ikeja";
-        store.Location = "Ikeja, Lagos";
-        store.VirtualAccountNumber = "01234";
         vm.ContinueCommand.Execute(null);
         await SettleAsync(dispatcher);
         Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "onboarding-3b-store-errors.png"));
 
-        store.Bank = "GTBank";
-        store.VirtualAccountNumber = "0123456789";
+        store.StoreName = "Adeyemi Stores Ikeja";
+        store.Location = "Ikeja, Lagos";
+        await vm.ContinueCommand.ExecuteAsync(null);
         await SettleAsync(dispatcher);
-        Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "onboarding-3c-store-valid.png"));
+        Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "onboarding-4-payment-account.png"));
 
+        var payment = (PaymentAccountStepViewModel)vm.CurrentStep;
         vm.ContinueCommand.Execute(null);
         await SettleAsync(dispatcher);
-        Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "onboarding-4-finish.png"));
+        Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "onboarding-4b-payment-errors.png"));
+
+        payment.MercuryForm.Bvn = "12345678901";
+        payment.MercuryForm.Bank = "Guaranty Trust Bank";
+        payment.MercuryForm.AccountNumber = "0123456789";
+        await vm.ContinueCommand.ExecuteAsync(null);
+        await SettleAsync(dispatcher);
+        Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "onboarding-5-finish.png"));
 
         // Finish onboarding: the shell swaps to the dashboard.
-        shell.ShowWorkspace(DemoData.SampleOnboardingResult);
+        shell.ShowWorkspace(DemoData.SampleMe);
         await SettleAsync(dispatcher);
         Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "dashboard-overview.png"));
 
@@ -121,6 +131,30 @@ internal static class ScreenshotRunner
         workspace.SelectedNavItem = workspace.NavItems.First(item => item.Title == "Payments");
         await SettleAsync(dispatcher);
         Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "payments.png"));
+
+        // Add a payment account: errors first, then a Mercury account that is pending, then another that is linked.
+        var payments = (ViewModels.Workspace.PaymentsViewModel)workspace.CurrentPage;
+        payments.OpenAddCommand.Execute(null);
+        payments.AddAccountCommand.Execute(null);
+        await SettleAsync(dispatcher);
+        Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "payments-add-errors.png"));
+        payments.CloseAddCommand.Execute(null);
+
+        // A store with no account yet shows the empty state and the pending state in turn.
+        await payments.Directory.AddStoreAsync("Adeyemi Stores Yaba", "Yaba, Lagos");
+        payments.SelectedStore = payments.Stores.First(store => store.Name == "Adeyemi Stores Yaba");
+        await SettleAsync(dispatcher);
+        Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "payments-no-account.png"));
+
+        payments.OpenAddCommand.Execute(null);
+        payments.MercuryForm.Bvn = "12345678901";
+        payments.MercuryForm.Bank = "Guaranty Trust Bank";
+        payments.MercuryForm.AccountNumber = "0123456789";
+        await SettleAsync(dispatcher);
+        Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "payments-add-mercury.png"));
+        await payments.AddAccountCommand.ExecuteAsync(null);
+        await SettleAsync(dispatcher);
+        Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "payments-pending.png"));
         workspace.SelectedNavItem = workspace.NavItems.First(item => item.Title == "Transactions");
         await SettleAsync(dispatcher);
         Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "transactions.png"));
@@ -130,7 +164,7 @@ internal static class ScreenshotRunner
         Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "transactions-detail.png"));
         transactions.CloseDetailCommand.Execute(null);
         transactions.SelectedStatus = "Failed";
-        transactions.SelectedStore = "Ikeja";
+        transactions.SelectedStore = "Adeyemi Stores Ikeja";
         await SettleAsync(dispatcher);
         Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "transactions-empty.png"));
         transactions.ClearFiltersCommand.Execute(null);
@@ -144,9 +178,15 @@ internal static class ScreenshotRunner
         Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "staff.png"));
         var staff = (ViewModels.Workspace.StaffViewModel)workspace.CurrentPage;
         staff.OpenInviteCommand.Execute(null);
-        staff.AddStaffCommand.Execute(null);
+        staff.SendInvitationCommand.Execute(null);
         await SettleAsync(dispatcher);
         Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "staff-add.png"));
+        staff.Form.FullName = "Ngozi Eze";
+        staff.Form.EmailAddress = "ngozi@adeyemistores.ng";
+        staff.Form.Role = "Accountant";
+        await staff.SendInvitationCommand.ExecuteAsync(null);
+        await SettleAsync(dispatcher);
+        Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "staff-invited.png"));
         staff.CloseInviteCommand.Execute(null);
 
         staff.OpenCommand.Execute(staff.Staff[0]);
@@ -191,6 +231,45 @@ internal static class ScreenshotRunner
         await SettleAsync(dispatcher);
         Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "dashboard-collapsed.png"));
 
+        window.Close();
+    }
+
+    private static async Task CaptureInvitationAsync(string folder, Dispatcher dispatcher)
+    {
+        var shell = new ShellViewModel(new DemoMercuryApi());
+        var window = new MainWindow(shell);
+        window.Show();
+        shell.ShowAcceptInvitation(null);
+        await SettleAsync(dispatcher);
+        Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "accept-invitation.png"));
+        ((ViewModels.Login.AcceptInvitationViewModel)shell.Current).AcceptCommand.Execute(null);
+        await SettleAsync(dispatcher);
+        Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "accept-invitation-errors.png"));
+        window.Close();
+    }
+
+    private static async Task CaptureOfflineAsync(string folder, Dispatcher dispatcher)
+    {
+        var shell = new ShellViewModel(new OfflineMercuryApi());
+        var window = new MainWindow(shell);
+        window.Show();
+        shell.ShowWorkspace(DemoData.SampleMe);
+        await SettleAsync(dispatcher);
+        Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "overview-offline.png"));
+        window.Close();
+    }
+
+    private static async Task CaptureCashierAsync(string folder, Dispatcher dispatcher)
+    {
+        // A cashier on a live server: fewer pages, no Add store, and pages not yet live say "Sample data".
+        var shell = new ShellViewModel(new OfflineMercuryApi());
+        var window = new MainWindow(shell);
+        window.Show();
+        shell.ShowWorkspace(DemoData.SampleMe with { Role = Models.StaffRole.Cashier, Name = "Tobi Okafor", Email = "tobi@adeyemistores.ng" });
+        var workspace = (ViewModels.Workspace.WorkspaceViewModel)shell.Current;
+        workspace.SelectedNavItem = workspace.NavItems.First(item => item.Title == "Stores");
+        await SettleAsync(dispatcher);
+        Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "cashier-stores.png"));
         window.Close();
     }
 

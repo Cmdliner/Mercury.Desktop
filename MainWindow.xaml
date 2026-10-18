@@ -2,6 +2,8 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="clr-namespace:Mercury.Desktop.Controls"
+        xmlns:views="clr-namespace:Mercury.Desktop.Views"
+        xmlns:vm="clr-namespace:Mercury.Desktop.ViewModels"
         xmlns:login="clr-namespace:Mercury.Desktop.Views.Login"
         xmlns:loginVm="clr-namespace:Mercury.Desktop.ViewModels.Login"
         xmlns:onboarding="clr-namespace:Mercury.Desktop.Views.Onboarding"
@@ -28,8 +30,14 @@
     </WindowChrome.WindowChrome>
 
     <Window.Resources>
+        <DataTemplate DataType="{x:Type vm:SplashViewModel}">
+            <views:SplashView />
+        </DataTemplate>
         <DataTemplate DataType="{x:Type loginVm:LoginViewModel}">
             <login:LoginView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type loginVm:AcceptInvitationViewModel}">
+            <login:AcceptInvitationView />
         </DataTemplate>
         <DataTemplate DataType="{x:Type onboardingVm:OnboardingViewModel}">
             <onboarding:OnboardingView />

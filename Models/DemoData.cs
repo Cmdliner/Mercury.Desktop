@@ -40,7 +40,7 @@ public static class DemoData
     public static OnboardingResult SampleOnboardingResult { get; } = new(
         new BusinessProfile("Adeyemi Stores", "owner@adeyemistores.ng", "+234 800 000 0000", "Lagos, Nigeria"),
         new OwnerAccount("Abdulazeez Adeyemi", "owner@adeyemistores.ng", "sample-password"),
-        new StoreProfile("Adeyemi Stores Ikeja", "Ikeja, Lagos", "GTBank", "0123456789"));
+        new StoreProfile("Adeyemi Stores Ikeja", "Ikeja, Lagos"));
 
     private static readonly DateTime Now = new(2026, 10, 18, 10, 24, 0);
 
@@ -80,4 +80,32 @@ public static class DemoData
         new("Oct 17", "Supplier payment", "Spending", "Operating", 320_000m),
         new("Oct 17", "Settlement to bank", "Settlement", "Operating", 250_000m),
     ];
+
+    /// <summary>The signed-in owner in sample mode.</summary>
+    public static Services.Api.MeResponse SampleMe { get; } = new(
+        Guid.Parse("00000000-0000-0000-0000-000000000001"),
+        "Abdulazeez Adeyemi",
+        "owner@adeyemistores.ng",
+        StaffRole.Owner,
+        Guid.Parse("00000000-0000-0000-0000-000000000002"),
+        "Adeyemi Stores",
+        null,
+        "Verified");
+
+    /// <summary>The overview in sample mode, built from the figures above.</summary>
+    public static Services.Api.OverviewResponse SampleOverview { get; } = new(
+        "Adeyemi Stores",
+        3,
+        TotalBalance: 4_820_400m,
+        AvailableFunds: 3_910_200m,
+        PendingSettlement: 910_200m,
+        SalesToday: SalesToday,
+        SalesLast12Days: SalesBars
+            .Select((share, i) => new Services.Api.DailySales(
+                DateOnly.FromDateTime(DateTime.Today.AddDays(i - SalesBars.Count + 1)), (decimal)share * 1_300_000m))
+            .ToList(),
+        RecentTransactions: RecentTransactions
+            .Select(t => new Services.Api.TransactionResponse(
+                Guid.NewGuid(), "TXN", null, t.Store, "Sale", t.Amount, t.Status, "BankTransfer", null, DateTime.Now))
+            .ToList());
 }
