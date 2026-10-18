@@ -22,6 +22,15 @@ internal static class DevTools
             return true;
         }
 
+        if (args.Contains("--login-errors"))
+        {
+            // Opens sign-in already showing its validation errors, for checking them on the real screen.
+            var window = new MainWindow();
+            ((ShellViewModel)window.DataContext).Login.SignInCommand.Execute(null);
+            window.Show();
+            return true;
+        }
+
         if (args.Contains("--dashboard"))
         {
             var window = new MainWindow();
