@@ -14,9 +14,9 @@
                     Style="{StaticResource Surface.Card}">
                 <StackPanel>
                     <TextBlock Style="{StaticResource Text.Caption}" Text="{Binding Label}" />
-                    <TextBlock Margin="0,14,0,14"
+                    <controls:Money Margin="0,14,0,14"
                                Style="{StaticResource Text.Stat}"
-                               Text="{Binding Amount, Converter={StaticResource Converter.Naira}}" />
+                               Amount="{Binding Amount}" />
                     <TextBlock Style="{StaticResource Text.Caption}" Text="{Binding Note}" />
                 </StackPanel>
             </Border>
@@ -37,10 +37,10 @@
                                Foreground="{StaticResource Brush.Success}"
                                Text="{Binding Status}" />
                 </StackPanel>
-                <TextBlock Grid.Column="1"
+                <controls:Money Grid.Column="1"
                            VerticalAlignment="Top"
                            FontFamily="{StaticResource Font.Medium}"
-                           Text="{Binding Amount, Converter={StaticResource Converter.Naira}}" />
+                           Amount="{Binding Amount}" />
             </Grid>
             <DataTemplate.Triggers>
                 <DataTrigger Binding="{Binding IsPending}" Value="True">
@@ -118,9 +118,9 @@
                         Style="{StaticResource Surface.Card}">
                     <StackPanel>
                         <TextBlock Style="{StaticResource Text.Heading}" Text="Sales today" />
-                        <TextBlock Margin="0,8,0,24"
+                        <controls:Money Margin="0,8,0,24"
                                    Style="{StaticResource Text.Stat}"
-                                   Text="{Binding SalesToday, Converter={StaticResource Converter.Naira}}" />
+                                   Amount="{Binding SalesToday}" />
                         <ItemsControl Height="150"
                                       ItemTemplate="{StaticResource SalesBar}"
                                       ItemsSource="{Binding SalesBars}">
@@ -157,11 +157,11 @@
                                    FontSize="16"
                                    Foreground="{StaticResource Brush.SidebarForeground}"
                                    Text="Today's reconciliation" />
-                        <TextBlock Margin="0,12,0,6"
+                        <controls:Money Margin="0,12,0,6"
                                    FontFamily="{StaticResource Font.SemiBold}"
                                    FontSize="28"
                                    Foreground="{StaticResource Brush.SidebarForeground}"
-                                   Text="{Binding ReconciledAmount, Converter={StaticResource Converter.Naira}}" />
+                                   Amount="{Binding ReconciledAmount}" />
                         <TextBlock Style="{StaticResource Text.Caption}"
                                    Foreground="{StaticResource Brush.SidebarMuted}"
                                    Text="Payments received" />

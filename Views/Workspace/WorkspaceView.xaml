@@ -16,6 +16,15 @@
         <DataTemplate DataType="{x:Type vm:PaymentsViewModel}">
             <local:PaymentsView />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:TransactionsViewModel}">
+            <local:TransactionsView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:AccountsViewModel}">
+            <local:AccountsView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:StaffViewModel}">
+            <local:StaffView />
+        </DataTemplate>
         <DataTemplate DataType="{x:Type vm:PlaceholderPageViewModel}">
             <local:PlaceholderPageView />
         </DataTemplate>
@@ -174,6 +183,26 @@
                             <ComboBoxItem Content="Lekki" />
                         </ComboBox>
                         <Button Margin="12,0,0,0"
+                                Command="{Binding ToggleAmountsCommand}"
+                                Style="{StaticResource Button.Icon}"
+                                ToolTip="Show or hide amounts"
+                                WindowChrome.IsHitTestVisibleInChrome="True">
+                            <controls:Icon Width="18" Height="18"
+                                           Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                           StrokeThickness="1.8">
+                                <controls:Icon.Style>
+                                    <Style TargetType="controls:Icon" BasedOn="{StaticResource {x:Type controls:Icon}}">
+                                        <Setter Property="Data" Value="{StaticResource Icon.Eye}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding DataContext.IsAmountsHidden, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
+                                                <Setter Property="Data" Value="{StaticResource Icon.EyeOff}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </controls:Icon.Style>
+                            </controls:Icon>
+                        </Button>
+                        <Button Margin="4,0,0,0"
                                 Style="{StaticResource Button.Icon}"
                                 ToolTip="Search"
                                 WindowChrome.IsHitTestVisibleInChrome="True">

@@ -1,0 +1,154 @@
+<UserControl x:Class="Mercury.Desktop.Views.Workspace.StaffView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:Mercury.Desktop.Controls"
+             xmlns:models="clr-namespace:Mercury.Desktop.Models"
+             Style="{StaticResource View.StepEntrance}">
+
+    <UserControl.Resources>
+        <DataTemplate DataType="{x:Type models:StaffMember}">
+            <Border Padding="0,16" BorderBrush="{StaticResource Brush.Border}" BorderThickness="0,1,0,0">
+                <Grid Margin="24,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2.2*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Orientation="Horizontal">
+                        <Border Style="{StaticResource Surface.Avatar}">
+                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding Initials}" />
+                        </Border>
+                        <StackPanel Margin="14,0,0,0" VerticalAlignment="Center">
+                            <TextBlock Style="{StaticResource Text.Label}" Text="{Binding Name}" />
+                            <TextBlock Style="{StaticResource Text.Caption}" Text="{Binding Email}" />
+                        </StackPanel>
+                    </StackPanel>
+                    <TextBlock Grid.Column="1" VerticalAlignment="Center" Style="{StaticResource Text.Body}" Text="{Binding Role}" />
+                    <TextBlock Grid.Column="2" VerticalAlignment="Center" Style="{StaticResource Text.Body}" Text="{Binding Store}" />
+                    <Border Grid.Column="3" HorizontalAlignment="Left" VerticalAlignment="Center"
+                            Style="{StaticResource Pill.Success}">
+                        <TextBlock Text="{Binding Access}" />
+                    </Border>
+                </Grid>
+            </Border>
+        </DataTemplate>
+
+        <!-- A role and what it can do, for the side card. -->
+        <Style x:Key="RoleName" TargetType="TextBlock" BasedOn="{StaticResource Text.Label}">
+            <Setter Property="Margin" Value="0,18,0,0" />
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="40,36,40,40">
+                <Grid Margin="0,0,0,28">
+                    <StackPanel>
+                        <TextBlock FontFamily="{StaticResource Font.SemiBold}" FontSize="28" Text="Staff" />
+                        <TextBlock Margin="0,6,0,0" Style="{StaticResource Text.Muted}"
+                                   Text="Who works in the business, and what each person can see." />
+                    </StackPanel>
+                    <Button HorizontalAlignment="Right" VerticalAlignment="Center"
+                            Command="{Binding OpenInviteCommand}" Style="{StaticResource Button.Primary}">
+                        <StackPanel Orientation="Horizontal">
+                            <controls:Icon Width="14" Height="14" Data="{StaticResource Icon.Plus}"
+                                           Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                           StrokeThickness="2" />
+                            <TextBlock Margin="8,0,0,1" Text="Add staff" />
+                        </StackPanel>
+                    </Button>
+                </Grid>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2.6*" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Border CornerRadius="{StaticResource Radius.Xl}" VerticalAlignment="Top" Style="{StaticResource Surface.Card}">
+                        <StackPanel>
+                            <Grid Margin="24,22,24,14">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="2.2*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Style="{StaticResource Text.Eyebrow}" Text="NAME" />
+                                <TextBlock Grid.Column="1" Style="{StaticResource Text.Eyebrow}" Text="ROLE" />
+                                <TextBlock Grid.Column="2" Style="{StaticResource Text.Eyebrow}" Text="STORE" />
+                                <TextBlock Grid.Column="3" Style="{StaticResource Text.Eyebrow}" Text="ACCESS" />
+                            </Grid>
+                            <ItemsControl ItemsSource="{Binding Staff}" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Roles -->
+                    <Border Grid.Column="2" Padding="24" VerticalAlignment="Top"
+                            CornerRadius="{StaticResource Radius.Xl}" Style="{StaticResource Surface.Card}">
+                        <StackPanel>
+                            <controls:BeadIllustration Width="200" Height="130" HorizontalAlignment="Center" />
+                            <TextBlock Margin="0,8,0,0" Style="{StaticResource Text.Heading}" Text="Roles" />
+                            <TextBlock Style="{StaticResource RoleName}" Text="Manager · Full" />
+                            <TextBlock Margin="0,3,0,0" Style="{StaticResource Text.Caption}" TextWrapping="Wrap"
+                                       Text="Everything in the stores they run, including staff." />
+                            <TextBlock Style="{StaticResource RoleName}" Text="Cashier · Store" />
+                            <TextBlock Margin="0,3,0,0" Style="{StaticResource Text.Caption}" TextWrapping="Wrap"
+                                       Text="Takes payments for one store only." />
+                            <TextBlock Style="{StaticResource RoleName}" Text="Accountant · Financial" />
+                            <TextBlock Margin="0,3,0,0" Style="{StaticResource Text.Caption}" TextWrapping="Wrap"
+                                       Text="Sees the books of every store, but cannot change settings." />
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Add staff dialog -->
+        <Grid Background="#990F0F0F"
+              Visibility="{Binding IsInviting, Converter={StaticResource Converter.BoolToVisibility}}">
+            <Border Width="480" Padding="32" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    CornerRadius="{StaticResource Radius.Xl}" Style="{StaticResource Surface.Card}">
+                <StackPanel DataContext="{Binding Form}">
+                    <Grid>
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource Text.Subtitle}" Text="Add staff" />
+                            <TextBlock Margin="0,6,0,0" Style="{StaticResource Text.Muted}"
+                                       Text="They will get an email to set up their login." />
+                        </StackPanel>
+                        <Button HorizontalAlignment="Right" VerticalAlignment="Top"
+                                Command="{Binding DataContext.CloseInviteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                Style="{StaticResource Button.Icon}" ToolTip="Close">
+                            <controls:Icon Width="16" Height="16" Data="{StaticResource Icon.Close}"
+                                           Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                           StrokeThickness="1.8" />
+                        </Button>
+                    </Grid>
+
+                    <controls:FormField Margin="0,28,0,18" Header="Full name">
+                        <TextBox controls:InputHelper.Placeholder="Adeola Bakare"
+                                 Text="{Binding FullName, UpdateSourceTrigger=PropertyChanged}" />
+                    </controls:FormField>
+                    <controls:FormField Margin="0,0,0,18" Header="Email">
+                        <TextBox controls:InputHelper.Placeholder="adeola@yourbusiness.ng"
+                                 Text="{Binding EmailAddress, UpdateSourceTrigger=PropertyChanged}" />
+                    </controls:FormField>
+                    <controls:FormField Margin="0,0,0,18" Header="Role">
+                        <ComboBox controls:InputHelper.Placeholder="Choose a role"
+                                  ItemsSource="{Binding Roles}" SelectedItem="{Binding Role}" />
+                    </controls:FormField>
+                    <controls:FormField Margin="0,0,0,28" Header="Store">
+                        <ComboBox controls:InputHelper.Placeholder="Choose a store"
+                                  ItemsSource="{Binding Stores}" SelectedItem="{Binding Store}" />
+                    </controls:FormField>
+
+                    <Button HorizontalAlignment="Right"
+                            Command="{Binding DataContext.AddStaffCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            Content="Add staff" Style="{StaticResource Button.Primary.Lg}" />
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

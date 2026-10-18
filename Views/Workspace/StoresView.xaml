@@ -27,9 +27,9 @@
                         </Border>
                     </Grid>
                     <TextBlock Margin="0,24,0,0" Style="{StaticResource Text.Caption}" Text="Balance" />
-                    <TextBlock Margin="0,4,0,20"
+                    <controls:Money Margin="0,4,0,20"
                                Style="{StaticResource Text.Stat}"
-                               Text="{Binding Balance, Converter={StaticResource Converter.Naira}}" />
+                               Amount="{Binding Balance}" />
                     <Border Style="{StaticResource Surface.Divider}" />
                     <Grid Margin="0,16,0,0">
                         <TextBlock Style="{StaticResource Text.Caption}" Text="{Binding Bank}" />

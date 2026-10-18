@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Input;
 using Mercury.Desktop.Models;
+using Mercury.Desktop.Services;
 
 namespace Mercury.Desktop.ViewModels.Workspace;
 
@@ -32,18 +33,16 @@ public sealed partial class WorkspaceViewModel : ObservableObject
             new("Overview", "Grid", "OPERATIONS", new OverviewViewModel(firstName)),
             new("Stores", "Store", "OPERATIONS", new StoresViewModel(stores)),
             new("Payments", "Payments", "OPERATIONS", new PaymentsViewModel(stores, account.Business.Name)),
-            new("Transactions", "Transfer", "OPERATIONS",
-                new PlaceholderPageViewModel("Transactions", "A full activity log you can filter by store and account.")),
-            new("Accounts", "Wallet", "OPERATIONS",
-                new PlaceholderPageViewModel("Accounts", "Operating, settlement and spending accounts, with balances from the ledger.")),
-            new("Staff", "Users", "MANAGEMENT",
-                new PlaceholderPageViewModel("Staff", "Invite your team and place them in the stores they work in.")),
+            new("Transactions", "Transfer", "OPERATIONS", new TransactionsViewModel(DemoData.Transactions)),
+            new("Accounts", "Wallet", "OPERATIONS", new AccountsViewModel(DemoData.Accounts, DemoData.LedgerEntries)),
+            new("Staff", "Users", "MANAGEMENT", new StaffViewModel(DemoData.Staff, stores)),
         ];
 
         // A grouped view lets the sidebar show a heading above each section.
         NavView = CollectionViewSource.GetDefaultView(NavItems);
         NavView.GroupDescriptions.Add(new PropertyGroupDescription(nameof(NavItemViewModel.Section)));
 
+        PrivacySettings.Instance.AmountsHidden = false;
         _selectedNavItem = NavItems[0];
     }
 
@@ -61,6 +60,15 @@ public sealed partial class WorkspaceViewModel : ObservableObject
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CurrentPage))]
     private NavItemViewModel _selectedNavItem;
+
+    /// <summary>When true, money amounts across the app are masked.</summary>
+    [ObservableProperty]
+    private bool _isAmountsHidden;
+
+    partial void OnIsAmountsHiddenChanged(bool value) => PrivacySettings.Instance.AmountsHidden = value;
+
+    [RelayCommand]
+    private void ToggleAmounts() => IsAmountsHidden = !IsAmountsHidden;
 
     /// <summary>When true the sidebar shrinks to icons only.</summary>
     [ObservableProperty]

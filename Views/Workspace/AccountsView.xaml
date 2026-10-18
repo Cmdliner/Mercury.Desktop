@@ -1,0 +1,107 @@
+<UserControl x:Class="Mercury.Desktop.Views.Workspace.AccountsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:Mercury.Desktop.Controls"
+             xmlns:models="clr-namespace:Mercury.Desktop.Models"
+             Style="{StaticResource View.StepEntrance}">
+
+    <UserControl.Resources>
+        <!-- One account: what it is for, what it holds and its share of the total. -->
+        <DataTemplate DataType="{x:Type models:LedgerAccount}">
+            <Border Margin="0,0,16,16" Padding="24"
+                    CornerRadius="{StaticResource Radius.Xl}"
+                    Style="{StaticResource Surface.Card}">
+                <StackPanel>
+                    <Grid>
+                        <Border Width="40" Height="40" HorizontalAlignment="Left"
+                                Background="{StaticResource Brush.Secondary}" CornerRadius="20">
+                            <controls:Icon Width="18" Height="18"
+                                           Data="{Binding IconKey, Converter={StaticResource Converter.Icon}}"
+                                           StrokeThickness="1.8" />
+                        </Border>
+                        <TextBlock HorizontalAlignment="Right" VerticalAlignment="Top" Style="{StaticResource Text.Caption}">
+                            <Run Text="{Binding Share, Mode=OneWay, StringFormat={}{0:P0}}" /><Run Text=" of total" />
+                        </TextBlock>
+                    </Grid>
+                    <TextBlock Margin="0,20,0,0" Style="{StaticResource Text.Heading}" Text="{Binding Name}" />
+                    <TextBlock Margin="0,4,0,0" Style="{StaticResource Text.Caption}" Text="{Binding Description}" />
+                    <controls:Money Margin="0,18,0,18" Amount="{Binding Balance}" Style="{StaticResource Text.Stat}" />
+                    <Grid Height="6">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="{Binding Filled}" />
+                            <ColumnDefinition Width="{Binding Rest}" />
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.ColumnSpan="2" Background="{StaticResource Brush.Input}" CornerRadius="3" />
+                        <Border Background="{StaticResource Brush.Foreground}" CornerRadius="3" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type models:LedgerEntry}">
+            <Border Padding="0,16" BorderBrush="{StaticResource Brush.Border}" BorderThickness="0,1,0,0">
+                <Grid Margin="24,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="80" />
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" MinWidth="110" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Style="{StaticResource Text.Caption}" Text="{Binding Date}" />
+                    <TextBlock Grid.Column="1" Style="{StaticResource Text.Body}" Text="{Binding Description}" />
+                    <TextBlock Grid.Column="2" Style="{StaticResource Text.Body}" Text="{Binding From}" />
+                    <TextBlock Grid.Column="3" Style="{StaticResource Text.Body}" Text="{Binding To}" />
+                    <controls:Money Grid.Column="4" HorizontalAlignment="Right" Amount="{Binding Amount}"
+                                    FontFamily="{StaticResource Font.Medium}" FontSize="14" />
+                </Grid>
+            </Border>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="40,36,24,40">
+            <Grid Margin="0,0,16,28">
+                <StackPanel>
+                    <TextBlock FontFamily="{StaticResource Font.SemiBold}" FontSize="28" Text="Accounts" />
+                    <TextBlock Margin="0,6,0,0" Style="{StaticResource Text.Muted}"
+                               Text="Where the money sits, from the ledger. Every payment is split between these accounts." />
+                </StackPanel>
+                <StackPanel HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <TextBlock HorizontalAlignment="Right" Style="{StaticResource Text.Caption}" Text="Total across accounts" />
+                    <controls:Money Margin="0,2,0,0" HorizontalAlignment="Right" Amount="{Binding Total}"
+                                    FontFamily="{StaticResource Font.SemiBold}" FontSize="22" />
+                </StackPanel>
+            </Grid>
+
+            <ItemsControl ItemsSource="{Binding Accounts}" Margin="0,0,-16,0">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="2" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+
+            <Border Margin="0,0,16,0" CornerRadius="{StaticResource Radius.Xl}" Style="{StaticResource Surface.Card}">
+                <StackPanel>
+                    <TextBlock Margin="24,24,24,16" Style="{StaticResource Text.Heading}" Text="Recent ledger entries" />
+                    <Grid Margin="24,0,24,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="80" />
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" MinWidth="110" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Style="{StaticResource Text.Eyebrow}" Text="DATE" />
+                        <TextBlock Grid.Column="1" Style="{StaticResource Text.Eyebrow}" Text="DESCRIPTION" />
+                        <TextBlock Grid.Column="2" Style="{StaticResource Text.Eyebrow}" Text="FROM" />
+                        <TextBlock Grid.Column="3" Style="{StaticResource Text.Eyebrow}" Text="TO" />
+                        <TextBlock Grid.Column="4" HorizontalAlignment="Right" Style="{StaticResource Text.Eyebrow}" Text="AMOUNT" />
+                    </Grid>
+                    <ItemsControl ItemsSource="{Binding Entries}" />
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

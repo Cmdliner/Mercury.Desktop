@@ -1,0 +1,218 @@
+<UserControl x:Class="Mercury.Desktop.Views.Workspace.TransactionsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:Mercury.Desktop.Controls"
+             xmlns:models="clr-namespace:Mercury.Desktop.Models"
+             Style="{StaticResource View.StepEntrance}">
+
+    <UserControl.Resources>
+        <!-- A thin button that makes a whole table row clickable. -->
+        <Style x:Key="TableRowButton" TargetType="Button">
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Focusable" Value="False" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Row"
+                                Background="Transparent"
+                                BorderBrush="{StaticResource Brush.Border}"
+                                BorderThickness="0,1,0,0"
+                                Padding="0,20">
+                            <ContentPresenter />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Row" Property="Background" Value="{StaticResource Brush.SurfaceMuted}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ColumnHeader" TargetType="TextBlock" BasedOn="{StaticResource Text.Eyebrow}" />
+
+        <DataTemplate DataType="{x:Type models:Transaction}">
+            <Button Command="{Binding DataContext.OpenCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                    CommandParameter="{Binding}"
+                    Style="{StaticResource TableRowButton}">
+                <Grid Margin="24,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1.3*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="1.1*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock FontFamily="{StaticResource Font.Mono}" FontSize="13" Text="{Binding Reference}" />
+                    <TextBlock Grid.Column="1" Style="{StaticResource Text.Body}" Text="{Binding Store}" />
+                    <TextBlock Grid.Column="2" Style="{StaticResource Text.Body}" Text="{Binding Type}" />
+                    <controls:Money Grid.Column="3" Amount="{Binding Amount}" FontFamily="{StaticResource Font.Medium}" FontSize="14" />
+                    <TextBlock x:Name="Status" Grid.Column="4" FontSize="13"
+                               Foreground="{StaticResource Brush.Success}" Text="{Binding StatusText}" />
+                </Grid>
+            </Button>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding StatusText}" Value="Pending">
+                    <Setter TargetName="Status" Property="Foreground" Value="{StaticResource Brush.SunInk}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding StatusText}" Value="Failed">
+                    <Setter TargetName="Status" Property="Foreground" Value="{StaticResource Brush.Destructive}" />
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+        <!-- One label and value in the detail drawer. -->
+        <Style x:Key="DetailLabel" TargetType="TextBlock" BasedOn="{StaticResource Text.Caption}">
+            <Setter Property="Width" Value="140" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="40,36,40,40">
+                <TextBlock FontFamily="{StaticResource Font.SemiBold}" FontSize="28" Text="Transactions" />
+                <TextBlock Margin="0,6,0,24" Style="{StaticResource Text.Muted}"
+                           Text="Every payment, transfer and settlement. Select one to see its ledger entries." />
+
+                <!-- Filters -->
+                <Border Padding="16" CornerRadius="{StaticResource Radius.Xl}" Style="{StaticResource Surface.Card}">
+                    <StackPanel Orientation="Horizontal">
+                        <ComboBox Width="170" ItemsSource="{Binding Stores}" SelectedItem="{Binding SelectedStore}" />
+                        <ComboBox Width="170" Margin="12,0,0,0" ItemsSource="{Binding Types}" SelectedItem="{Binding SelectedType}" />
+                        <ComboBox Width="170" Margin="12,0,0,0" ItemsSource="{Binding Statuses}" SelectedItem="{Binding SelectedStatus}" />
+                        <Button Margin="12,0,0,0" Command="{Binding ClearFiltersCommand}" Content="Clear filters"
+                                Style="{StaticResource Button.Ghost}" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Table -->
+                <Border Margin="0,16,0,0" CornerRadius="{StaticResource Radius.Xl}" Style="{StaticResource Surface.Card}">
+                    <StackPanel>
+                        <Grid Margin="24,22,24,16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1.3*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="1.1*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Style="{StaticResource ColumnHeader}" Text="REFERENCE" />
+                            <TextBlock Grid.Column="1" Style="{StaticResource ColumnHeader}" Text="STORE" />
+                            <TextBlock Grid.Column="2" Style="{StaticResource ColumnHeader}" Text="TYPE" />
+                            <TextBlock Grid.Column="3" Style="{StaticResource ColumnHeader}" Text="AMOUNT" />
+                            <TextBlock Grid.Column="4" Style="{StaticResource ColumnHeader}" Text="STATUS" />
+                        </Grid>
+
+                        <ItemsControl ItemsSource="{Binding View}" />
+
+                        <!-- Nothing matches the filters -->
+                        <StackPanel Margin="0,24,0,48" HorizontalAlignment="Center"
+                                    Visibility="{Binding HasResults, Converter={StaticResource Converter.InverseBoolToVisibility}}">
+                            <controls:BeadIllustration Width="200" Height="150" />
+                            <TextBlock Margin="0,8,0,0" HorizontalAlignment="Center" Style="{StaticResource Text.Heading}" Text="Nothing matches" />
+                            <TextBlock Margin="0,6,0,0" HorizontalAlignment="Center" Style="{StaticResource Text.Muted}"
+                                       Text="Try a different store, type or status." />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Detail drawer -->
+        <Grid Background="#990F0F0F"
+              Visibility="{Binding IsDetailOpen, Converter={StaticResource Converter.BoolToVisibility}}">
+            <Border Width="460" HorizontalAlignment="Right" Background="{StaticResource Brush.Card}"
+                    DataContext="{Binding Selected}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="32,24,32,32">
+                        <Button HorizontalAlignment="Right"
+                                Command="{Binding DataContext.CloseDetailCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                Style="{StaticResource Button.Icon}" ToolTip="Close">
+                            <controls:Icon Width="16" Height="16" Data="{StaticResource Icon.Close}"
+                                           Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                           StrokeThickness="1.8" />
+                        </Button>
+
+                        <TextBlock Margin="0,8,0,0" Style="{StaticResource Text.Subtitle}" Text="Transaction detail" />
+                        <TextBlock Margin="0,6,0,0" FontFamily="{StaticResource Font.Mono}" FontSize="13"
+                                   Foreground="{StaticResource Brush.MutedForeground}" Text="{Binding Reference}" />
+
+                        <Border Margin="0,16,0,0" HorizontalAlignment="Left">
+                            <Border.Style>
+                                <Style TargetType="Border" BasedOn="{StaticResource Pill.Success}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding StatusText}" Value="Pending">
+                                            <Setter Property="Background" Value="{StaticResource Brush.SunSoft}" />
+                                            <Setter Property="TextElement.Foreground" Value="{StaticResource Brush.SunInk}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding StatusText}" Value="Failed">
+                                            <Setter Property="Background" Value="#FBE9E7" />
+                                            <Setter Property="TextElement.Foreground" Value="{StaticResource Brush.Destructive}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <TextBlock Text="{Binding StatusText}" />
+                        </Border>
+
+                        <controls:Money Margin="0,22,0,0" Amount="{Binding Amount}" Style="{StaticResource Text.Stat}" />
+                        <TextBlock Margin="0,4,0,24" Style="{StaticResource Text.Caption}" Text="{Binding Type}" />
+                        <Border Style="{StaticResource Surface.Divider}" />
+
+                        <StackPanel Margin="0,22,0,0">
+                            <StackPanel Margin="0,0,0,18" Orientation="Horizontal">
+                                <TextBlock Style="{StaticResource DetailLabel}" Text="Store" />
+                                <TextBlock Style="{StaticResource Text.Label}" Text="{Binding Store}" />
+                            </StackPanel>
+                            <StackPanel Margin="0,0,0,18" Orientation="Horizontal">
+                                <TextBlock Style="{StaticResource DetailLabel}" Text="Reference" />
+                                <TextBlock Style="{StaticResource Text.Label}" Text="{Binding Reference}" />
+                            </StackPanel>
+                            <StackPanel Margin="0,0,0,18" Orientation="Horizontal">
+                                <TextBlock Style="{StaticResource DetailLabel}" Text="Created" />
+                                <TextBlock Style="{StaticResource Text.Label}" Text="{Binding CreatedText}" />
+                            </StackPanel>
+                            <StackPanel Margin="0,0,0,18" Orientation="Horizontal">
+                                <TextBlock Style="{StaticResource DetailLabel}" Text="Payment method" />
+                                <TextBlock Style="{StaticResource Text.Label}" Text="{Binding Method}" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Style="{StaticResource DetailLabel}" Text="Customer" />
+                                <TextBlock Style="{StaticResource Text.Label}" Text="{Binding Customer}" />
+                            </StackPanel>
+                        </StackPanel>
+
+                        <TextBlock Margin="0,32,0,14" Style="{StaticResource Text.Heading}" Text="Ledger entries" />
+                        <Border Padding="16" Background="{StaticResource Brush.SurfaceMuted}">
+                            <StackPanel>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="64" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Style="{StaticResource Text.Caption}" Text="Debit" />
+                                    <TextBlock Grid.Column="1" Style="{StaticResource Text.Label}" Text="{Binding DebitAccount}" />
+                                    <controls:Money Grid.Column="2" Amount="{Binding Amount}" FontSize="13" />
+                                </Grid>
+                                <Grid Margin="0,14,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="64" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Style="{StaticResource Text.Caption}" Text="Credit" />
+                                    <TextBlock Grid.Column="1" Style="{StaticResource Text.Label}" Text="{Binding CreditAccount}" />
+                                    <controls:Money Grid.Column="2" Amount="{Binding Amount}" FontSize="13" />
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

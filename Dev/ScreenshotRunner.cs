@@ -121,7 +121,39 @@ internal static class ScreenshotRunner
         workspace.SelectedNavItem = workspace.NavItems.First(item => item.Title == "Payments");
         await SettleAsync(dispatcher);
         Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "payments.png"));
+        workspace.SelectedNavItem = workspace.NavItems.First(item => item.Title == "Transactions");
+        await SettleAsync(dispatcher);
+        Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "transactions.png"));
+        var transactions = (ViewModels.Workspace.TransactionsViewModel)workspace.CurrentPage;
+        transactions.OpenCommand.Execute(transactions.View.Cast<Transaction>().First());
+        await SettleAsync(dispatcher);
+        Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "transactions-detail.png"));
+        transactions.CloseDetailCommand.Execute(null);
+        transactions.SelectedStatus = "Failed";
+        transactions.SelectedStore = "Ikeja";
+        await SettleAsync(dispatcher);
+        Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "transactions-empty.png"));
+        transactions.ClearFiltersCommand.Execute(null);
+
+        workspace.SelectedNavItem = workspace.NavItems.First(item => item.Title == "Accounts");
+        await SettleAsync(dispatcher);
+        Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "accounts.png"));
+
+        workspace.SelectedNavItem = workspace.NavItems.First(item => item.Title == "Staff");
+        await SettleAsync(dispatcher);
+        Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "staff.png"));
+        var staff = (ViewModels.Workspace.StaffViewModel)workspace.CurrentPage;
+        staff.OpenInviteCommand.Execute(null);
+        staff.AddStaffCommand.Execute(null);
+        await SettleAsync(dispatcher);
+        Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "staff-add.png"));
+        staff.CloseInviteCommand.Execute(null);
+
         workspace.SelectedNavItem = workspace.NavItems[0];
+        workspace.ToggleAmountsCommand.Execute(null);
+        await SettleAsync(dispatcher);
+        Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "dashboard-hidden.png"));
+        workspace.ToggleAmountsCommand.Execute(null);
         workspace.ToggleSidebarCommand.Execute(null);
         await SettleAsync(dispatcher);
         Save(window, (FrameworkElement)window.Content, Path.Combine(folder, "dashboard-collapsed.png"));
