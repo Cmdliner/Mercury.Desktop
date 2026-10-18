@@ -36,6 +36,7 @@ Resources/
     Scrollbars.xaml       the slim scroll bar (implicit, applies everywhere)
     Converters.xaml       value converters registered as Converter.*
   Fonts/                Geist, embedded (SIL Open Font License)
+  Images/               photos used as textures (login panel, overview banner, store cards, payment panel)
 Controls/               small reusable pieces: Icon, LogoMark, FormField, InputHelper, PasswordBoxHelper, WindowControls
 Converters/             Naira, Scale, ResourceKey (icon lookup), BoolToVisibility and its inverse
 Models/                 plain data (DemoData holds the sample figures the pages show for now)
@@ -77,8 +78,8 @@ raises `Completed` with an `OnboardingResult`; the matching view for each step i
 
 ## Window and title bar
 
-`MainWindow` has no system frame (`WindowStyle=None` with `WindowChrome`). The top 64px is the drag area and the
-edges resize. `Controls/WindowControls` draws minimise, maximise/restore and close. Anything clickable inside the
+`MainWindow` has no system frame (`WindowStyle=None` with `WindowChrome`). The top 44px is the drag area and the
+edges resize. It is a near-black title bar with the brand on the left and the window buttons on the right. `Controls/WindowControls` draws minimise, maximise/restore and close. Anything clickable inside the
 drag area must set `WindowChrome.IsHitTestVisibleInChrome="True"`, or the drag area swallows the click. The
 window is capped to the screen's work area, and padded back in when maximised.
 
@@ -104,3 +105,11 @@ The eye button in the top bar masks every money figure (`₦ ••••••`
 Show an amount with `<controls:Money Amount="{Binding Balance}" />`, never a plain TextBlock with a converter, or
 it will ignore the switch. The switch is `Services/PrivacySettings`; it resets to visible each time the workspace opens. The overview uses
 sample data from `DemoData` until the backend exists.
+
+## Sidebar, user menu and sign-out
+
+The sidebar is near-black, with white as the selected row. Collapsed, each nav icon is centred and the name moves
+into a tooltip. Clicking the avatar (top bar) or the owner card (sidebar) opens the user menu: profile details,
+show or hide amounts, and sign out. Sign out asks for confirmation, then returns to a fresh sign-in screen
+(`WorkspaceViewModel.SignedOut` is handled by `ShellViewModel`). Dialogs are overlays in `WorkspaceView`.
+`BeadIllustration` follows the inherited text colour, so set `Foreground` to use it on a dark surface.
